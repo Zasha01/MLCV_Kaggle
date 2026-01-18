@@ -1,0 +1,121 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# Conda
+.conda/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# IDEs
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Project-specific outputs
+outputs/models/*
+!outputs/figures/.gitkeep
+!outputs/results/.gitkeep
+!outputs/models/.gitkeep
+data/
+
+# LaTeX build artifacts
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.toc
+latex/*.lof
+latex/*.lot
+latex/*.fls
+latex/*.fdb_latexmk
+latex/*.synctex.gz
+latex/*.bbl
+latex/*.blg
+latex/*.bcf
+latex/*.run.xml
+latex/*.nav
+latex/*.snm
+latex/*.vrb
+latex/*.idx
+latex/*.ilg
+latex/*.ind
+latex/*.acn
+latex/*.acr
+latex/*.alg
+latex/*.glg
+latex/*.glo
+latex/*.gls
+latex/*.ist
+latex/*.loa
+latex/*.lol
+latex/*.xdy
+latex/*.xdv
+latex/*.figlist
+latex/*.makefile
