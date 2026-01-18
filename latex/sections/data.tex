@@ -16,6 +16,13 @@ The dataset contains 12 original features (excluding \texttt{id}), split into:
     \item Skewness: -0.048 (approximately symmetric)
 \end{itemize}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{target_distribution.png}
+\caption{Distribution of the target variable \texttt{exam\_score} (histogram and box plot).}
+\label{fig:target_distribution}
+\end{figure}
+
 \subsection{Data Cleaning}
 We performed the following preprocessing steps:
 \begin{itemize}
@@ -33,5 +40,28 @@ EDA revealed important relationships between features and exam scores:
     \item \textbf{sleep\_hours} exhibits weak positive correlation (r = 0.167).
     \item \textbf{age} shows negligible correlation (r = 0.011).
 \end{itemize}
+
+\noindent Figure~\ref{fig:corr_matrix} summarizes linear correlations among numerical variables, while Figures~\ref{fig:scatter_num_target} and \ref{fig:cat_boxplots} illustrate feature-target relationships for numerical and categorical variables.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{correlation_matrix.png}
+\caption{Correlation matrix of numerical features and the target.}
+\label{fig:corr_matrix}
+\end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{scatter_numerical_vs_target.png}
+\caption{Scatter plots of numerical features versus \texttt{exam\_score} with linear trend lines (sampled for visualization).}
+\label{fig:scatter_num_target}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{categorical_boxplots.png}
+\caption{Score distributions across categorical features. Categories with higher \texttt{sleep\_quality}, \texttt{study\_method}, and \texttt{facility\_rating} tend to show higher median scores.}
+\label{fig:cat_boxplots}
+\end{figure*}
 
 \noindent Categorical variables like \texttt{sleep\_quality}, \texttt{study\_method}, and \texttt{facility\_rating} showed meaningful differences in score distributions across categories.

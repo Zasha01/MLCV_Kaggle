@@ -15,16 +15,23 @@ Table~\ref{tab:results} summarizes the performance of each method, sorted by CV 
 \toprule
 \textbf{Model} & \textbf{CV RMSE} & \textbf{Std} \\
 \midrule
-\textbf{Ensemble (Weighted)} & \textbf{8.7568} & -- \\
+\textbf{Ensemble (Optimized)} & \textbf{8.7568} & -- \\
 CatBoost & 8.7618 & $\pm$0.0101 \\
 LightGBM & 8.7724 & $\pm$0.0089 \\
-Ensemble (Simple Avg) & 8.7730 & -- \\
+Ensemble (Simple) & 8.7730 & -- \\
 Ridge Regression & 8.8887 & $\pm$0.0105 \\
 Random Forest & 8.9095 & $\pm$0.0109 \\
 XGBoost & 8.9271 & $\pm$0.1928 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{model_comparison_with_ensemble.png}
+\caption{Cross-validation RMSE comparison across all models and ensembles (lower is better).}
+\label{fig:model_comparison}
+\end{figure}
 
 \noindent Key observations:
 \begin{itemize}
@@ -45,36 +52,50 @@ The weighted ensemble was optimized using Nelder-Mead minimization on out-of-fol
 \noindent The low weight assigned to XGBoost reflects its higher variance and slightly worse performance.
 
 \subsection{Feature Importance}
-Feature importance analysis (LightGBM gain-based) revealed the top predictors:
+Feature importance analysis (based on the best single model, CatBoost) revealed the top predictors:
 
 \begin{table}[H]
 \centering
-\caption{Top 10 Most Important Features (LightGBM Gain)}
+\caption{Top 10 Most Important Features (CatBoost)}
 \label{tab:featimp}
 \begin{tabular}{l r}
 \toprule
 \textbf{Feature} & \textbf{Importance} \\
 \midrule
-formula\_score & 8.81e+08 \\
-study\_attendance (interaction) & 1.26e+08 \\
-sleep\_quality\_target\_enc & 3.28e+07 \\
-study\_method\_target\_enc & 2.84e+07 \\
-facility\_rating\_target\_enc & 2.39e+07 \\
-sleep\_quality & 2.08e+07 \\
-study\_method & 1.82e+07 \\
-facility\_rating & 1.33e+07 \\
-study\_hours & 6.61e+06 \\
-study\_sleep (interaction) & 4.57e+06 \\
+formula\_score & 60.78 \\
+sleep\_quality\_target\_enc & 5.99 \\
+study\_method\_target\_enc & 4.95 \\
+facility\_rating\_target\_enc & 4.10 \\
+study\_attendance & 3.48 \\
+sleep\_quality & 2.70 \\
+study\_method & 2.62 \\
+sleep\_quality\_freq & 2.21 \\
+facility\_rating & 2.14 \\
+study\_method\_freq & 1.75 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\noindent The engineered \texttt{formula\_score} feature dominates, followed by the \texttt{study\_attendance} interaction, confirming that feature engineering significantly improved predictive power.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{feature_importance.png}
+\caption{Feature importance for the best single model (CatBoost). The engineered \texttt{formula\_score} and category encodings dominate.}
+\label{fig:feature_importance}
+\end{figure}
+
+\noindent The engineered \texttt{formula\_score} feature dominates, followed by encodings of \texttt{sleep\_quality} and \texttt{study\_method}, confirming that feature engineering significantly improved predictive power.
 
 \subsection{Residual Analysis}
 For the best model (Weighted Ensemble), residual statistics on the training set:
 \begin{itemize}
-    \item Mean residual: 0.042 (near-zero bias)
-    \item Residual std: 8.76 (consistent with CV RMSE)
+    \item Mean residual: 0.0415 (near-zero bias)
+    \item Residual std: 8.7567 (consistent with CV RMSE)
     \item Range: [-43.35, +48.15] (some large errors remain)
 \end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{residual_analysis.png}
+\caption{Residual analysis for the best model (optimized ensemble): predicted vs.\ actual scores and residual distribution.}
+\label{fig:residuals}
+\end{figure}
