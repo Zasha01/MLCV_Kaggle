@@ -1,0 +1,15 @@
+\section{Technical Background}
+This task is a supervised regression problem. Given an input feature vector $x \in \mathbb{R}^d$, we aim to predict a continuous target value $y$, representing the exam score.
+
+\subsection{Root Mean Squared Error (RMSE)}
+The primary evaluation metric is Root Mean Squared Error:
+\begin{equation}
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2}
+\end{equation}
+Lower RMSE indicates better predictive performance.
+
+\subsection{Baseline Models}
+We consider standard regression baselines such as Linear Regression and Ridge Regression, which are simple and interpretable.
+
+\subsection{Gradient Boosted Decision Trees}
+We also evaluate gradient boosting models (e.g., XGBoost, LightGBM, CatBoost), which often perform strongly on structured/tabular datasets by combining many weak decision tree learners into a robust model.

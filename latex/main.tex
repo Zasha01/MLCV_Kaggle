@@ -1,0 +1,84 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% -------------------- Packages --------------------
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{float}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% -------------------- Title --------------------
+\title{Predicting Student Exam Scores Using Tabular Machine Learning\\
+\thanks{University Kaggle Competition Report (Playground Series S6E1)}
+}
+
+% -------------------- Authors --------------------
+\author{
+\IEEEauthorblockN{Student 1}
+\IEEEauthorblockA{\textit{Department} \\
+\textit{University Name}\\
+City, Country \\
+email@domain.com}
+\and
+\IEEEauthorblockN{Student 2}
+\IEEEauthorblockA{\textit{Department} \\
+\textit{University Name}\\
+City, Country \\
+email@domain.com}
+\and
+\IEEEauthorblockN{Student 3}
+\IEEEauthorblockA{\textit{Department} \\
+\textit{University Name}\\
+City, Country \\
+email@domain.com}
+}
+
+\begin{document}
+\maketitle
+
+% -------------------- Abstract --------------------
+\begin{abstract}
+This project addresses the Kaggle Playground Series S6E1 competition: predicting student exam scores from demographic, academic, and behavioral features.
+Using a dataset of 630,000 training samples with 12 original features, we developed a comprehensive machine learning pipeline including feature engineering (expanding to 44 features), multiple model comparison, and ensemble optimization.
+We evaluated Ridge Regression, Random Forest, and gradient boosting methods (LightGBM, XGBoost, CatBoost).
+Our best solution---a weighted ensemble of CatBoost (62\%), LightGBM (33\%), and XGBoost (5\%)---achieved a cross-validation RMSE of \textbf{8.7568}.
+Analysis revealed that study hours (correlation r=0.76) and engineered interaction features were the strongest predictors.
+We discuss feature importance, error patterns, and limitations of the synthetic dataset.
+\end{abstract}
+
+% -------------------- Keywords --------------------
+\begin{IEEEkeywords}
+regression, tabular data, machine learning, gradient boosting, cross-validation, RMSE
+\end{IEEEkeywords}
+
+% -------------------- Sections --------------------
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/data}
+\input{sections/methodology}
+\input{sections/experiments_results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+% -------------------- References --------------------
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% -------------------- Appendix (optional) --------------------
+\input{sections/appendix}
+
+\end{document}

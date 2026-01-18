@@ -1,0 +1,27 @@
+\section{Conclusion}
+This project addressed the Kaggle Playground Series S6E1 challenge of predicting student exam scores from tabular demographic and behavioral data.
+
+\subsection{Summary of Contributions}
+\begin{itemize}
+    \item Developed a comprehensive feature engineering pipeline expanding 12 original features to 44 engineered features.
+    \item Compared 7 modeling approaches from linear baselines to ensemble methods.
+    \item Achieved a final CV RMSE of \textbf{8.7568} using a weighted ensemble of CatBoost (62\%), LightGBM (33\%), and XGBoost (5\%).
+    \item Identified \texttt{study\_hours} and its interactions as the most predictive features.
+\end{itemize}
+
+\subsection{Key Findings}
+\begin{enumerate}
+    \item \textbf{Feature engineering matters}: The engineered \texttt{formula\_score} and interaction features contributed more than model selection.
+    \item \textbf{Gradient boosting dominates}: CatBoost and LightGBM significantly outperformed traditional models.
+    \item \textbf{Ensemble provides marginal gains}: Weighted blending improved over single models by $\sim$0.005 RMSE.
+    \item \textbf{Study behavior is key}: Study hours and class attendance are the strongest predictors of exam performance.
+\end{enumerate}
+
+\subsection{Future Work}
+Potential improvements include:
+\begin{itemize}
+    \item Systematic hyperparameter optimization using Optuna or Bayesian methods
+    \item Neural network approaches (TabNet, deep embeddings)
+    \item Stacking ensembles with meta-learners
+    \item Incorporating the original (non-synthetic) dataset for additional training signal
+\end{itemize}

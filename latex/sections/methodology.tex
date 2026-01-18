@@ -1,0 +1,44 @@
+\section{Methodology}
+Our modeling pipeline follows a systematic approach from baseline models to advanced ensembles.
+
+\subsection{Validation Strategy}
+To ensure reliable performance estimation and prevent overfitting:
+\begin{itemize}
+    \item \textbf{5-fold cross-validation} with shuffle (random seed = 42)
+    \item Consistent fold splits across all models for fair comparison
+    \item Out-of-fold (OOF) predictions stored for ensemble optimization
+\end{itemize}
+
+\subsection{Feature Engineering}
+We expanded from 12 original features to \textbf{44 engineered features}:
+\begin{itemize}
+    \item \textbf{Interaction features}: study\_hours $\times$ class\_attendance, study\_hours $\times$ sleep\_hours, etc.
+    \item \textbf{Ratio features}: attendance\_per\_hour, sleep\_per\_study
+    \item \textbf{Polynomial features}: squared and cubed terms for key numerical variables
+    \item \textbf{Binary flags}: is\_low\_sleep ($<$6h), is\_high\_attendance ($>$80\%), is\_high\_study ($>$6h)
+    \item \textbf{Domain formula}: $6.0 \times \text{study\_hours} + 0.35 \times \text{attendance} + 1.5 \times \text{sleep\_hours}$
+    \item \textbf{Target encoding}: CV-safe mean encoding for all categorical features
+    \item \textbf{Frequency encoding}: Category frequency as additional features
+\end{itemize}
+
+\subsection{Models Evaluated}
+We evaluated models of increasing complexity:
+
+\textbf{Baseline Models:}
+\begin{itemize}
+    \item Ridge Regression ($\alpha = 10.0$) with standardized features
+    \item Random Forest (100 trees, max\_depth=15, min\_samples\_leaf=10)
+\end{itemize}
+
+\textbf{Gradient Boosting Models:}
+\begin{itemize}
+    \item LightGBM (learning\_rate=0.05, num\_leaves=31, early stopping at 100 rounds)
+    \item XGBoost (learning\_rate=0.05, max\_depth=6, tree\_method=hist)
+    \item CatBoost (learning\_rate=0.05, depth=6, l2\_leaf\_reg=3)
+\end{itemize}
+
+\textbf{Ensemble Methods:}
+\begin{itemize}
+    \item Simple average of LightGBM, XGBoost, CatBoost predictions
+    \item Weighted ensemble with Nelder-Mead optimized weights on OOF predictions
+\end{itemize}

@@ -1,0 +1,37 @@
+\section{Dataset Description and Preprocessing}
+The dataset originates from the Kaggle Playground Series S6E1 competition, consisting of synthetically generated student data.
+The training set contains 630,000 samples with the target label \texttt{exam\_score}, while the test set contains 270,000 samples requiring predictions.
+
+\subsection{Feature Overview}
+The dataset contains 12 original features (excluding \texttt{id}), split into:
+\begin{itemize}
+    \item \textbf{Numerical (4)}: age (17--24), study\_hours (0.08--7.91), class\_attendance (40.6--99.4\%), sleep\_hours (4.1--9.9)
+    \item \textbf{Categorical (7)}: gender, course (B.Tech, B.Sc, etc.), internet\_access, sleep\_quality (good/average/poor), study\_method, facility\_rating, exam\_difficulty
+\end{itemize}
+
+\noindent The target variable \texttt{exam\_score} has the following distribution:
+\begin{itemize}
+    \item Mean: 62.51, Standard Deviation: 18.92
+    \item Range: 19.60 -- 100.00
+    \item Skewness: -0.048 (approximately symmetric)
+\end{itemize}
+
+\subsection{Data Cleaning}
+We performed the following preprocessing steps:
+\begin{itemize}
+    \item Verified \textbf{no missing values} in both training and test sets.
+    \item Applied label encoding for categorical variables.
+    \item Implemented CV-safe target encoding to prevent data leakage.
+    \item Added frequency encoding for categorical features.
+\end{itemize}
+
+\subsection{Exploratory Data Analysis (EDA)}
+EDA revealed important relationships between features and exam scores:
+\begin{itemize}
+    \item \textbf{study\_hours} shows the strongest correlation (r = 0.762) with exam score.
+    \item \textbf{class\_attendance} has moderate positive correlation (r = 0.361).
+    \item \textbf{sleep\_hours} exhibits weak positive correlation (r = 0.167).
+    \item \textbf{age} shows negligible correlation (r = 0.011).
+\end{itemize}
+
+\noindent Categorical variables like \texttt{sleep\_quality}, \texttt{study\_method}, and \texttt{facility\_rating} showed meaningful differences in score distributions across categories.

@@ -1,0 +1,33 @@
+\section{Discussion}
+
+\subsection{Model Performance Analysis}
+The results demonstrate clear performance hierarchy:
+\begin{enumerate}
+    \item \textbf{Gradient boosting models} (CatBoost, LightGBM) achieved the best performance ($\sim$8.76 RMSE), improving over baselines by 1.3--1.7\%.
+    \item \textbf{Ensemble methods} provided marginal but consistent gains, with the weighted ensemble achieving the best overall RMSE of 8.7568.
+    \item \textbf{CatBoost} slightly outperformed LightGBM as a single model, likely due to its sophisticated handling of categorical features.
+    \item \textbf{XGBoost} underperformed expectations with higher variance, potentially due to suboptimal hyperparameters or sensitivity to the feature set.
+\end{enumerate}
+
+\subsection{Feature Engineering Impact}
+The engineered \texttt{formula\_score} feature, based on domain knowledge from competition discussions, became the single most important predictor.
+This highlights the value of incorporating domain expertise and exploring competition forums for insights.
+
+Target encoding and interaction features (especially \texttt{study\_attendance}) contributed significantly, demonstrating that careful feature engineering can outweigh model selection in tabular competitions.
+
+\subsection{Error Analysis}
+Residual analysis revealed:
+\begin{itemize}
+    \item Near-zero mean residual (0.042) indicates minimal systematic bias.
+    \item Residual range of [-43.35, +48.15] suggests difficulty predicting extreme scores.
+    \item Largest errors likely occur for students with unusual combinations of features.
+\end{itemize}
+
+\subsection{Limitations}
+Several limitations apply to this work:
+\begin{itemize}
+    \item \textbf{Synthetic data}: The dataset was generated from a deep learning model, so relationships may not perfectly reflect real-world patterns.
+    \item \textbf{Computational constraints}: More extensive hyperparameter tuning and neural network approaches were not explored due to time constraints.
+    \item \textbf{Leakage potential}: While CV-safe target encoding was used, additional care should be taken in production settings.
+    \item \textbf{Generalization}: Results are specific to this synthetic dataset and may not transfer to real student data.
+\end{itemize}

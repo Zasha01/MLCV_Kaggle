@@ -1,0 +1,80 @@
+\section{Experiments and Results}
+
+\subsection{Experimental Setup}
+All experiments used identical preprocessing, feature engineering, and 5-fold cross-validation splits.
+Performance is measured by mean CV RMSE (Root Mean Squared Error), with standard deviation indicating stability across folds.
+
+\subsection{Model Comparison}
+Table~\ref{tab:results} summarizes the performance of each method, sorted by CV RMSE.
+
+\begin{table}[H]
+\centering
+\caption{Model Performance Comparison (Lower RMSE is Better)}
+\label{tab:results}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Model} & \textbf{CV RMSE} & \textbf{Std} \\
+\midrule
+\textbf{Ensemble (Weighted)} & \textbf{8.7568} & -- \\
+CatBoost & 8.7618 & $\pm$0.0101 \\
+LightGBM & 8.7724 & $\pm$0.0089 \\
+Ensemble (Simple Avg) & 8.7730 & -- \\
+Ridge Regression & 8.8887 & $\pm$0.0105 \\
+Random Forest & 8.9095 & $\pm$0.0109 \\
+XGBoost & 8.9271 & $\pm$0.1928 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Key observations:
+\begin{itemize}
+    \item Gradient boosting models outperform linear and tree-based baselines by $\sim$0.12--0.15 RMSE.
+    \item CatBoost achieved the best single-model performance (8.7618).
+    \item The weighted ensemble provides marginal improvement ($\sim$0.005) over the best single model.
+    \item XGBoost showed higher variance across folds ($\pm$0.19) compared to other models.
+\end{itemize}
+
+\subsection{Ensemble Optimization}
+The weighted ensemble was optimized using Nelder-Mead minimization on out-of-fold predictions:
+\begin{itemize}
+    \item \textbf{CatBoost}: 61.98\% weight
+    \item \textbf{LightGBM}: 33.16\% weight
+    \item \textbf{XGBoost}: 4.86\% weight
+\end{itemize}
+
+\noindent The low weight assigned to XGBoost reflects its higher variance and slightly worse performance.
+
+\subsection{Feature Importance}
+Feature importance analysis (LightGBM gain-based) revealed the top predictors:
+
+\begin{table}[H]
+\centering
+\caption{Top 10 Most Important Features (LightGBM Gain)}
+\label{tab:featimp}
+\begin{tabular}{l r}
+\toprule
+\textbf{Feature} & \textbf{Importance} \\
+\midrule
+formula\_score & 8.81e+08 \\
+study\_attendance (interaction) & 1.26e+08 \\
+sleep\_quality\_target\_enc & 3.28e+07 \\
+study\_method\_target\_enc & 2.84e+07 \\
+facility\_rating\_target\_enc & 2.39e+07 \\
+sleep\_quality & 2.08e+07 \\
+study\_method & 1.82e+07 \\
+facility\_rating & 1.33e+07 \\
+study\_hours & 6.61e+06 \\
+study\_sleep (interaction) & 4.57e+06 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The engineered \texttt{formula\_score} feature dominates, followed by the \texttt{study\_attendance} interaction, confirming that feature engineering significantly improved predictive power.
+
+\subsection{Residual Analysis}
+For the best model (Weighted Ensemble), residual statistics on the training set:
+\begin{itemize}
+    \item Mean residual: 0.042 (near-zero bias)
+    \item Residual std: 8.76 (consistent with CV RMSE)
+    \item Range: [-43.35, +48.15] (some large errors remain)
+\end{itemize}

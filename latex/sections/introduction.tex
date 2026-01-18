@@ -1,0 +1,15 @@
+\section{Introduction}
+Academic performance prediction is a significant machine learning application with implications for personalized learning and early intervention systems.
+In this work, we address the Kaggle Playground Series S6E1 competition, where the objective is to predict student exam scores from behavioral and contextual features including study hours, class attendance, sleep patterns, and study methodology.
+
+The dataset comprises 630,000 training samples and 270,000 test samples, generated synthetically from a deep learning model trained on real exam score data.
+This provides a controlled environment to compare various machine learning approaches.
+
+The main contributions of this paper are:
+\begin{itemize}
+    \item A comprehensive exploratory analysis revealing that \texttt{study\_hours} (r=0.76) is the strongest predictor of exam scores.
+    \item Feature engineering expanding 12 original features to 44 derived features including interactions, target encoding, and domain-specific formulas.
+    \item Comparison of 7 regression models from Ridge to gradient boosting ensembles.
+    \item Achievement of 8.7568 CV RMSE using an optimized weighted ensemble of CatBoost, LightGBM, and XGBoost.
+    \item Analysis of feature importance and prediction error patterns.
+\end{itemize}

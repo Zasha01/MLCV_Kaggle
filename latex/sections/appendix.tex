@@ -1,0 +1,78 @@
+\appendix
+\section{Reproducibility Details}
+All experiments used a fixed random seed (SEED=42) for dataset splitting and cross-validation.
+Implementation was done in Python using:
+\begin{itemize}
+    \item pandas, numpy for data manipulation
+    \item scikit-learn for preprocessing and baseline models
+    \item LightGBM, XGBoost, CatBoost for gradient boosting
+    \item scipy for ensemble weight optimization
+\end{itemize}
+
+\section{Hyperparameters}
+Tables~\ref{tab:hparams_lgb}, \ref{tab:hparams_cat}, and \ref{tab:hparams_xgb} report hyperparameters for each gradient boosting model.
+
+\begin{table}[H]
+\centering
+\caption{LightGBM Hyperparameters}
+\label{tab:hparams_lgb}
+\begin{tabular}{l c}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+learning\_rate & 0.05 \\
+num\_leaves & 31 \\
+feature\_fraction & 0.9 \\
+bagging\_fraction & 0.8 \\
+min\_child\_samples & 20 \\
+reg\_alpha & 0.1 \\
+reg\_lambda & 0.1 \\
+early\_stopping\_rounds & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{CatBoost Hyperparameters}
+\label{tab:hparams_cat}
+\begin{tabular}{l c}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+learning\_rate & 0.05 \\
+depth & 6 \\
+l2\_leaf\_reg & 3 \\
+iterations & 10000 \\
+early\_stopping\_rounds & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{XGBoost Hyperparameters}
+\label{tab:hparams_xgb}
+\begin{tabular}{l c}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+learning\_rate & 0.05 \\
+max\_depth & 6 \\
+subsample & 0.8 \\
+colsample\_bytree & 0.9 \\
+reg\_alpha & 0.1 \\
+reg\_lambda & 0.1 \\
+tree\_method & hist \\
+early\_stopping\_rounds & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ensemble Weights}
+The final weighted ensemble used the following optimized weights:
+\begin{itemize}
+    \item CatBoost: 61.98\%
+    \item LightGBM: 33.16\%
+    \item XGBoost: 4.86\%
+\end{itemize}
