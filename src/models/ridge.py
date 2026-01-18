@@ -31,3 +31,4 @@ class RidgeModel(BaseModel):
         X_scaled = self.scaler.transform(X)
         return self.model.predict(X_scaled)
 
+

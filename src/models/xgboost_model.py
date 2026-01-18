@@ -38,3 +38,4 @@ class XGBoostModel(BaseModel):
             return self.model.feature_importances_
         return None
 
+

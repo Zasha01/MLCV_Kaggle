@@ -29,3 +29,4 @@ class RandomForestModel(BaseModel):
             return self.model.feature_importances_
         return None
 
+

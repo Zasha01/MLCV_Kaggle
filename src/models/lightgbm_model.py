@@ -52,3 +52,4 @@ class LightGBMModel(BaseModel):
             return self.model.feature_importance(importance_type='gain')
         return None
 
+

@@ -239,3 +239,4 @@ def plot_residuals(y_true, y_pred, model_name, save_path):
     plt.close()
     print(f"Saved: {save_path}")
 
+

@@ -91,3 +91,4 @@ class EnsembleModel(BaseModel):
         """Get ensemble weights."""
         return dict(zip([m.name for m in self.models], self.weights))
 
+
