@@ -30,6 +30,9 @@ MLCV_Kaggle/
 │   ├── run_eda.py               # Generate EDA plots
 │   ├── run_training.py          # Train all models with CV
 │   ├── run_tuning.py            # Hyperparameter tuning
+│   ├── run_senet.py             # Train SE-ResNet neural network
+│   ├── run_stacking.py          # Train stacking ensemble
+│   ├── run_shap_analysis.py     # SHAP interpretability analysis
 │   └── run_submission.py        # Generate submission file
 ├── outputs/                      # Generated outputs
 │   ├── figures/                 # Saved plots for report
@@ -61,7 +64,13 @@ python scripts/run_training.py
 # Step 3: (Optional) Hyperparameter tuning
 python scripts/run_tuning.py --n_trials 50
 
-# Step 4: Generate submission file
+# Step 4: (Optional) Train deep learning model
+python scripts/run_senet.py --epochs 300
+
+# Step 5: (Optional) SHAP interpretability analysis
+python scripts/run_shap_analysis.py
+
+# Step 6: Generate submission file
 python scripts/run_submission.py
 ```
 
@@ -111,6 +120,48 @@ python scripts/run_tuning.py --n_trials 100  # More thorough search
 ```
 
 **Output:** `outputs/results/best_params.json`
+
+### `run_senet.py` - SE-ResNet Neural Network
+- Trains deep learning model with:
+  - Entity embeddings for categorical features
+  - Residual blocks with Squeeze-and-Excitation attention
+  - LayerNorm and dropout regularization
+- **Data augmentation** with original dataset (optional)
+- 5-fold cross-validation with PyTorch
+- Achieves **best performance** (RMSE ~8.60)
+
+**Usage:**
+```bash
+python scripts/run_senet.py                    # Default (300 epochs, with augmentation)
+python scripts/run_senet.py --epochs 500       # More training
+python scripts/run_senet.py --no-augment       # Disable data augmentation
+python scripts/run_senet.py --batch-size 512   # Larger batches
+```
+
+**Output:** 
+- `outputs/results/senet_oof_predictions.csv`
+- `outputs/results/senet_submission.csv`
+- `outputs/results/senet_stats.json`
+- `outputs/figures/senet_residuals.png`
+
+### `run_shap_analysis.py` - Model Interpretability
+- Computes SHAP values for CatBoost model
+- Generates interpretability visualizations:
+  - Summary plot (global feature importance)
+  - Bar plot (mean |SHAP| values)
+  - Dependence plots (feature interactions)
+  - Waterfall plots (individual predictions)
+- Provides insights into model decision-making
+
+**Output:** SHAP plots in `outputs/figures/`, statistics in `outputs/results/shap_statistics.csv`
+
+### `run_stacking.py` - Stacking Ensemble
+- Uses saved OOF predictions from gradient boosting models
+- Trains Ridge regression meta-learner
+- Fast (no base model retraining)
+- Shows meta-learner coefficients
+
+**Output:** Stacking predictions and statistics in `outputs/results/`
 
 ### `run_submission.py` - Generate Submission
 - Loads best model predictions from `run_training.py`
