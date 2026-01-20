@@ -4,7 +4,7 @@ from .random_forest import RandomForestModel
 from .lightgbm_model import LightGBMModel
 from .xgboost_model import XGBoostModel
 from .catboost_model import CatBoostModel
-from .ensemble import EnsembleModel
+from .ensemble import EnsembleModel, StackingModel
 
 __all__ = [
     'RidgeModel',
@@ -12,7 +12,8 @@ __all__ = [
     'LightGBMModel',
     'XGBoostModel',
     'CatBoostModel',
-    'EnsembleModel'
+    'EnsembleModel',
+    'StackingModel'
 ]
 
 
