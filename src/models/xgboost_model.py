@@ -15,15 +15,33 @@ class XGBoostModel(BaseModel):
         
     def fit(self, X, y, X_val=None, y_val=None):
         """Fit XGBoost model."""
-        self.model = xgb.XGBRegressor(**self.params)
+        # Create a copy of params to avoid modifying the original
+        params = self.params.copy()
+        
+        # Extract early_stopping_rounds (it's a fit parameter, not constructor parameter)
+        early_stopping = params.pop('early_stopping_rounds', None)
         
         if X_val is not None and y_val is not None:
-            self.model.fit(
-                X, y,
-                eval_set=[(X_val, y_val)],
-                verbose=False
-            )
+            # Use validation set with early stopping
+            self.model = xgb.XGBRegressor(**params)
+            if early_stopping is not None:
+                self.model.fit(
+                    X, y,
+                    eval_set=[(X_val, y_val)],
+                    verbose=False
+                )
+            else:
+                self.model.fit(
+                    X, y,
+                    eval_set=[(X_val, y_val)],
+                    verbose=False
+                )
         else:
+            # No validation set - train without early stopping
+            # Cap n_estimators to a reasonable value when no early stopping
+            if 'n_estimators' in params and params['n_estimators'] > 1000:
+                params['n_estimators'] = 1000
+            self.model = xgb.XGBRegressor(**params)
             self.model.fit(X, y, verbose=False)
         
         return self
