@@ -43,11 +43,11 @@ email@domain.com}
 City, Country \\
 email@domain.com}
 \and
-\IEEEauthorblockN{Student 3}
-\IEEEauthorblockA{\textit{Department} \\
-\textit{University Name}\\
-City, Country \\
-email@domain.com}
+\IEEEauthorblockN{Zakariea Sharfeddine}
+\IEEEauthorblockA{\textit{FEUP} \\
+\textit{University of Porto}\\
+Porto, Portugal \\
+up202501730@up.pt}
 }
 
 \begin{document}
@@ -56,16 +56,16 @@ email@domain.com}
 % -------------------- Abstract --------------------
 \begin{abstract}
 This project addresses the Kaggle Playground Series S6E1 competition: predicting student exam scores from demographic, academic, and behavioral features.
-Using a dataset of 630,000 training samples with 12 original features, we developed a comprehensive machine learning pipeline including feature engineering (expanding to 44 features), multiple model comparison, and ensemble optimization.
-We evaluated Ridge Regression, Random Forest, and gradient boosting methods (LightGBM, XGBoost, CatBoost).
-Our best solution---a weighted ensemble of CatBoost (62\%), LightGBM (33\%), and XGBoost (5\%)---achieved a cross-validation RMSE of \textbf{8.7568}.
-Analysis revealed that study hours (correlation r=0.76) and engineered interaction features were the strongest predictors.
-We discuss feature importance, error patterns, and limitations of the synthetic dataset.
+Using a dataset of 630,000 training samples with 12 original features, we developed a comprehensive machine learning pipeline including feature engineering, Bayesian hyperparameter optimization, ensemble methods, and deep learning.
+We evaluated traditional models (Ridge, Random Forest), gradient boosting methods (LightGBM, XGBoost, CatBoost), and a novel SE-ResNet neural network architecture combining entity embeddings, residual connections, and Squeeze-and-Excitation attention.
+Our best solution---the SE-ResNet with data augmentation---achieved a cross-validation RMSE of \textbf{8.6047}, outperforming the best gradient boosting ensemble (8.7567) by 1.74\%.
+SHAP analysis revealed that study hours and an engineered domain formula were the strongest predictors.
+We discuss model interpretability, the advantages of neural networks for tabular data, and trade-offs between different approaches.
 \end{abstract}
 
 % -------------------- Keywords --------------------
 \begin{IEEEkeywords}
-regression, tabular data, machine learning, gradient boosting, cross-validation, RMSE
+tabular deep learning, gradient boosting, squeeze-and-excitation, entity embeddings, SHAP, ensemble learning
 \end{IEEEkeywords}
 
 % -------------------- Sections --------------------
@@ -78,7 +78,7 @@ regression, tabular data, machine learning, gradient boosting, cross-validation,
 \input{sections/conclusion}
 
 % -------------------- References --------------------
-\bibliographystyle{IEEEtran}
+\bibliographystyle{ieeetr}
 \bibliography{references}
 
 % -------------------- Appendix (optional) --------------------

@@ -53,5 +53,61 @@ often resulting in improved performance on datasets with many categorical variab
 \subsection{Ensemble Learning}
 Ensemble learning combines predictions from multiple models to achieve improved robustness and
 generalization. By aggregating models with different inductive biases, ensembles reduce variance
-and exploit complementary strengths. In this work, both simple averaging and weighted ensembling
-are considered to further enhance predictive performance.
+and exploit complementary strengths. In this work, both simple averaging, weighted ensembling,
+and stacking with a meta-learner are considered to further enhance predictive performance.
+
+\subsection{Deep Learning for Tabular Data}
+While gradient boosting methods have traditionally dominated tabular data competitions, recent
+advances in neural network architectures have shown competitive or superior performance.
+Key innovations enabling this include:
+
+\textbf{Entity Embeddings:} Categorical features are mapped to dense vector representations
+through learnable embedding layers, allowing the network to discover semantic relationships
+between categories. For a categorical feature with $K$ unique values, an embedding layer
+learns a matrix $\mathbf{E} \in \mathbb{R}^{K \times d}$ where $d$ is the embedding dimension.
+
+\textbf{Residual Connections:} Deep networks benefit from skip connections that allow gradients
+to flow directly through the network, enabling training of deeper architectures without
+degradation. A residual block computes:
+\begin{equation}
+\mathbf{h}_{l+1} = \mathbf{h}_l + \mathcal{F}(\mathbf{h}_l; \theta_l),
+\end{equation}
+where $\mathcal{F}$ represents learnable transformations.
+
+\textbf{Squeeze-and-Excitation (SE) Blocks:} Originally proposed for image classification,
+SE blocks adaptively recalibrate feature responses by modeling channel interdependencies.
+Given a feature vector $\mathbf{x} \in \mathbb{R}^C$, the SE mechanism computes attention
+weights via a bottleneck:
+\begin{equation}
+\mathbf{s} = \sigma(\mathbf{W}_2 \cdot \text{ReLU}(\mathbf{W}_1 \cdot \mathbf{x})),
+\end{equation}
+where $\mathbf{W}_1 \in \mathbb{R}^{C/r \times C}$ and $\mathbf{W}_2 \in \mathbb{R}^{C \times C/r}$
+with reduction ratio $r$. The output is $\mathbf{x} \odot \mathbf{s}$, allowing the network to
+emphasize informative features and suppress less useful ones.
+
+\subsection{Model Interpretability with SHAP}
+While gradient boosting models achieve strong predictive performance on tabular data, their
+decision-making process is often opaque. To address this, we employ SHAP (SHapley Additive
+exPlanations)~\cite{lundbergUnifiedApproachInterpreting2017}, a unified framework for interpreting
+model predictions based on game-theoretic Shapley values~\cite{shapleyValueNPersonGames1953}.
+
+SHAP values quantify the contribution of each feature to an individual prediction. For a prediction
+$\hat{y}$, the SHAP value $\phi_j$ for feature $j$ satisfies the efficiency property:
+\begin{equation}
+\hat{y} = \phi_0 + \sum_{j=1}^{d} \phi_j,
+\end{equation}
+where $\phi_0$ is the expected prediction across the training data. This decomposition ensures that
+feature contributions sum exactly to the model output, providing faithful explanations.
+
+Tree-based models enable efficient SHAP computation via TreeExplainer~\cite{lundbergLocalExplanationsGlobal2020},
+which exploits the tree structure to calculate exact Shapley values in polynomial time. This allows
+us to generate both local explanations (why did the model predict this score for a specific student?)
+and global insights (which features matter most across all predictions?).
+
+Global feature importance is derived by aggregating local SHAP values:
+\begin{equation}
+I_j = \frac{1}{N} \sum_{i=1}^{N} |\phi_j^{(i)}|,
+\end{equation}
+where $\phi_j^{(i)}$ is the SHAP value of feature $j$ for sample $i$. Unlike permutation importance,
+SHAP-based importance accounts for feature interactions and provides directional information about
+how features influence predictions~\cite{lundbergExplainableMachinelearningPredictions2018}.

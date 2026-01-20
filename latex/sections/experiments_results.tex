@@ -15,7 +15,10 @@ Table~\ref{tab:results} summarizes the performance of each method, sorted by CV 
 \toprule
 \textbf{Model} & \textbf{CV RMSE} & \textbf{Std} \\
 \midrule
-\textbf{Ensemble (Optimized)} & \textbf{8.7568} & -- \\
+\textbf{SE-ResNet (Neural Network)} & \textbf{8.6047} & $\pm$0.015 \\
+\midrule
+Stacking (Ridge Meta) & 8.7567 & -- \\
+Ensemble (Optimized) & 8.7568 & -- \\
 CatBoost & 8.7618 & $\pm$0.0101 \\
 LightGBM & 8.7724 & $\pm$0.0089 \\
 Ensemble (Simple) & 8.7730 & -- \\
@@ -35,11 +38,72 @@ XGBoost & 8.9271 & $\pm$0.1928 \\
 
 \noindent Key observations:
 \begin{itemize}
-    \item Gradient boosting models outperform linear and tree-based baselines by $\sim$0.12--0.15 RMSE.
-    \item CatBoost achieved the best single-model performance (8.7618).
-    \item The weighted ensemble provides marginal improvement ($\sim$0.005) over the best single model.
-    \item XGBoost showed higher variance across folds ($\pm$0.19) compared to other models.
+    \item \textbf{SE-ResNet achieves the best performance} (8.6047), outperforming all gradient boosting methods by $\sim$0.15 RMSE.
+    \item Among tree-based models, CatBoost achieved the best single-model performance (8.7618).
+    \item Gradient boosting ensembles provide only marginal improvements over single GBM models.
+    \item The neural network's advantage comes from learned feature interactions and data augmentation.
 \end{itemize}
+
+\subsection{Hyperparameter Tuning Results}
+Bayesian optimization with Optuna (50 trials per model) yielded significant improvements, particularly for XGBoost. Table~\ref{tab:tuning_improvement} compares default vs.\ tuned performance.
+
+\begin{table}[H]
+\centering
+\caption{Impact of Hyperparameter Tuning on Model Performance}
+\label{tab:tuning_improvement}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Model} & \textbf{Default RMSE} & \textbf{Tuned RMSE} & \textbf{Improvement} \\
+\midrule
+LightGBM & 8.7724 & 8.7658 & 0.0066 (0.08\%) \\
+XGBoost & 8.9271 & 8.8220 & \textbf{0.1051 (1.18\%)} \\
+CatBoost & 8.7618 & 8.7808 & -0.0190 (-0.22\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Key findings from hyperparameter tuning:
+\begin{itemize}
+    \item \textbf{XGBoost} benefited most from tuning, with RMSE improving by 0.105 (1.18\%). The optimal configuration used deeper trees (\texttt{max\_depth}=9) with lower learning rate (0.019) and strong regularization (\texttt{reg\_lambda}=9.98).
+    \item \textbf{LightGBM} showed modest improvement. Tuning favored more leaves (\texttt{num\_leaves}=84) with moderate learning rate (0.033) and higher regularization.
+    \item \textbf{CatBoost} performed slightly worse after tuning, suggesting the default parameters were already near-optimal for this dataset. This highlights that automated tuning does not always guarantee improvement.
+\end{itemize}
+
+Table~\ref{tab:tuned_params} shows the optimal hyperparameters discovered.
+
+\begin{table}[H]
+\centering
+\caption{Optimal Hyperparameters from Bayesian Optimization (50 trials)}
+\label{tab:tuned_params}
+\begin{tabular}{l l r}
+\toprule
+\textbf{Model} & \textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multirow{7}{*}{LightGBM} 
+    & num\_leaves & 84 \\
+    & learning\_rate & 0.0334 \\
+    & feature\_fraction & 0.643 \\
+    & bagging\_fraction & 0.890 \\
+    & min\_child\_samples & 29 \\
+    & reg\_alpha & 0.043 \\
+    & reg\_lambda & 9.431 \\
+\midrule
+\multirow{6}{*}{XGBoost}
+    & max\_depth & 9 \\
+    & learning\_rate & 0.0189 \\
+    & subsample & 0.916 \\
+    & colsample\_bytree & 0.859 \\
+    & reg\_alpha & 0.090 \\
+    & reg\_lambda & 9.979 \\
+\midrule
+\multirow{4}{*}{CatBoost}
+    & depth & 6 \\
+    & learning\_rate & 0.0998 \\
+    & l2\_leaf\_reg & 5.133 \\
+    & bagging\_temperature & 0.385 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Ensemble Optimization}
 The weighted ensemble was optimized using Nelder-Mead minimization on out-of-fold predictions:
@@ -50,6 +114,58 @@ The weighted ensemble was optimized using Nelder-Mead minimization on out-of-fol
 \end{itemize}
 
 \noindent The low weight assigned to XGBoost reflects its higher variance and slightly worse performance.
+
+\subsection{Stacking Ensemble}
+We implemented a two-level stacking architecture with Ridge regression as the meta-learner. The base models (LightGBM, XGBoost, CatBoost) generate out-of-fold predictions, which serve as meta-features for the Ridge model.
+
+\begin{table}[H]
+\centering
+\caption{Stacking Meta-Learner Coefficients}
+\label{tab:stacking_coef}
+\begin{tabular}{l r}
+\toprule
+\textbf{Base Model} & \textbf{Coefficient} \\
+\midrule
+LightGBM & 0.334 \\
+XGBoost & 0.049 \\
+CatBoost & 0.620 \\
+Intercept & -0.215 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The stacking ensemble achieved \textbf{RMSE = 8.7567}, marginally outperforming the weighted average ensemble (8.7568). The meta-learner coefficients align closely with the optimized ensemble weights, confirming CatBoost's dominant contribution.
+
+\subsection{Neural Network Results (SE-ResNet)}
+The SE-ResNet architecture achieved the best overall performance with \textbf{RMSE = 8.6047}, representing a \textbf{1.74\% improvement} over the best gradient boosting ensemble.
+
+\begin{table}[H]
+\centering
+\caption{SE-ResNet Cross-Validation Results}
+\label{tab:senet_results}
+\begin{tabular}{c c}
+\toprule
+\textbf{Fold} & \textbf{RMSE} \\
+\midrule
+1 & 8.612 \\
+2 & 8.598 \\
+3 & 8.621 \\
+4 & 8.589 \\
+5 & 8.603 \\
+\midrule
+\textbf{Mean} & \textbf{8.6047} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Key factors contributing to the neural network's superior performance:
+\begin{itemize}
+    \item \textbf{Data augmentation}: The original dataset (not just competition data) was concatenated with each training fold, effectively increasing training data and reducing overfitting.
+    \item \textbf{Learned embeddings}: Entity embeddings for categorical features allow the network to discover semantic relationships not captured by one-hot or target encoding.
+    \item \textbf{SE attention}: Squeeze-and-Excitation blocks dynamically reweight features, emphasizing informative dimensions for each sample.
+    \item \textbf{Residual connections}: Enable training of deeper networks without degradation.
+    \item \textbf{Aggressive regularization}: Dropout (11\%), weight decay ($10^{-4}$), and early stopping prevent overfitting.
+\end{itemize}
 
 \subsection{Feature Importance}
 Feature importance analysis (based on the best single model, CatBoost) revealed the top predictors:
@@ -84,6 +200,26 @@ study\_method\_freq & 1.75 \\
 \end{figure}
 
 \noindent The engineered \texttt{formula\_score} feature dominates, followed by encodings of \texttt{sleep\_quality} and \texttt{study\_method}, confirming that feature engineering significantly improved predictive power.
+
+\subsection{SHAP Analysis}
+To provide deeper insights into model behavior, we computed SHAP values~\cite{lundbergUnifiedApproachInterpreting2017} using TreeExplainer~\cite{lundbergLocalExplanationsGlobal2020} on a representative sample of 30,000 training instances.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{shap_summary.png}
+\caption{SHAP summary plot showing feature contributions to predictions. Each point represents a sample; color indicates feature value (red=high, blue=low); horizontal position shows impact on prediction.}
+\label{fig:shap_summary}
+\end{figure}
+
+The SHAP analysis reveals several key insights:
+\begin{itemize}
+    \item \textbf{formula\_score} has the highest mean $|\text{SHAP}|$ value, confirming its dominant predictive role. Higher values consistently push predictions upward.
+    \item \textbf{Target encodings} (sleep\_quality, study\_method, facility\_rating) show strong effects, with higher encoded values correlating with higher predicted scores.
+    \item \textbf{study\_hours} exhibits a clear positive relationship: more study time leads to higher predicted scores.
+    \item \textbf{Interaction effects}: The dependence plots reveal non-linear relationships; for instance, the effect of study hours saturates at very high values.
+\end{itemize}
+
+Unlike standard feature importance (which only measures magnitude), SHAP values provide directional information: we can see that higher study hours \textit{increase} predictions while poor sleep quality \textit{decreases} them. This interpretability is crucial for understanding and validating the model's decision-making process~\cite{lundbergExplainableMachinelearningPredictions2018}.
 
 \subsection{Residual Analysis}
 For the best model (Weighted Ensemble), residual statistics on the training set:

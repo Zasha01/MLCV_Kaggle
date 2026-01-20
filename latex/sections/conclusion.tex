@@ -4,24 +4,26 @@ This project addressed the Kaggle Playground Series S6E1 challenge of predicting
 \subsection{Summary of Contributions}
 \begin{itemize}
     \item Developed a comprehensive feature engineering pipeline expanding 12 original features to 44 engineered features.
-    \item Compared 7 modeling approaches from linear baselines to ensemble methods.
-    \item Achieved a final CV RMSE of \textbf{8.7568} using a weighted ensemble of CatBoost (62\%), LightGBM (33\%), and XGBoost (5\%).
-    \item Identified \texttt{study\_hours} and its interactions as the most predictive features.
+    \item Compared 8+ modeling approaches spanning linear models, tree ensembles, gradient boosting, and deep learning.
+    \item Implemented Bayesian hyperparameter optimization with Optuna (50 trials per model).
+    \item Achieved a final CV RMSE of \textbf{8.6047} using SE-ResNet neural network, outperforming the best gradient boosting ensemble by 1.74\%.
+    \item Provided model interpretability analysis using SHAP values for gradient boosting models.
 \end{itemize}
 
 \subsection{Key Findings}
 \begin{enumerate}
-    \item \textbf{Feature engineering matters}: The engineered \texttt{formula\_score} and interaction features contributed more than model selection.
-    \item \textbf{Gradient boosting dominates}: CatBoost and LightGBM significantly outperformed traditional models.
-    \item \textbf{Ensemble provides marginal gains}: Weighted blending improved over single models by $\sim$0.005 RMSE.
-    \item \textbf{Study behavior is key}: Study hours and class attendance are the strongest predictors of exam performance.
+    \item \textbf{Deep learning can beat GBMs on tabular data}: The SE-ResNet architecture with entity embeddings and attention mechanisms achieved the best results, challenging the conventional wisdom that gradient boosting always wins on tabular data.
+    \item \textbf{Data augmentation is crucial}: Incorporating the original dataset during neural network training provided significant improvements.
+    \item \textbf{Feature engineering matters}: The engineered \texttt{formula\_score} dominated feature importance across all models.
+    \item \textbf{Attention helps}: Squeeze-and-Excitation blocks enable instance-specific feature weighting, improving predictions.
+    \item \textbf{GBM ensembles have diminishing returns}: Weighted blending and stacking improved GBMs by only $\sim$0.005 RMSE.
 \end{enumerate}
 
 \subsection{Future Work}
 Potential improvements include:
 \begin{itemize}
-    \item Systematic hyperparameter optimization using Optuna or Bayesian methods
-    \item Neural network approaches (TabNet, deep embeddings)
-    \item Stacking ensembles with meta-learners
-    \item Incorporating the original (non-synthetic) dataset for additional training signal
+    \item Applying data augmentation to gradient boosting models for fair comparison
+    \item Exploring alternative neural architectures (TabNet, FT-Transformer, NODE)
+    \item Hybrid ensembles combining GBM and neural network predictions
+    \item Investigating neural network interpretability methods (e.g., attention visualization, integrated gradients)
 \end{itemize}

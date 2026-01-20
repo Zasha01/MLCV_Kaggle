@@ -41,4 +41,75 @@ We evaluated models of increasing complexity:
 \begin{itemize}
     \item Simple average of LightGBM, XGBoost, CatBoost predictions
     \item Weighted ensemble with Nelder-Mead optimized weights on OOF predictions
+    \item Stacking ensemble with Ridge regression meta-learner
 \end{itemize}
+
+\textbf{Deep Learning Model (SE-ResNet):}
+\begin{itemize}
+    \item Neural network with entity embeddings for categorical features
+    \item Residual blocks with Squeeze-and-Excitation attention mechanism
+    \item Data augmentation using original dataset (not just competition data)
+\end{itemize}
+
+\subsection{SE-ResNet Architecture}
+Our neural network architecture combines several modern techniques for tabular data:
+
+\textbf{Input Processing:}
+\begin{itemize}
+    \item Numerical features: StandardScaler normalization, plus engineered features (log transforms, squared terms, sinusoidal encodings, frequency counts)
+    \item Categorical features: Learnable embeddings with dimension $d=8$ per category
+    \item Domain formula: $5.91 \times \text{study\_hours} + 0.35 \times \text{attendance} + 1.42 \times \text{sleep\_hours} + 4.78$
+\end{itemize}
+
+\textbf{Network Architecture:}
+\begin{itemize}
+    \item Projection layer: Concatenated inputs $\rightarrow$ 256 hidden dimensions
+    \item 3 residual blocks, each containing:
+    \begin{itemize}
+        \item LayerNorm $\rightarrow$ Linear $\rightarrow$ ReLU $\rightarrow$ Dropout (0.11)
+        \item SE block with reduction ratio $r=4$
+        \item Skip connection
+    \end{itemize}
+    \item Prediction head: 256 $\rightarrow$ 64 $\rightarrow$ 16 $\rightarrow$ 1
+\end{itemize}
+
+\textbf{Training Configuration:}
+\begin{itemize}
+    \item Optimizer: AdamW (lr=$10^{-3}$, weight decay=$10^{-4}$)
+    \item Scheduler: ReduceLROnPlateau (factor=0.5, patience=10)
+    \item Early stopping: patience=20 epochs
+    \item Batch size: 256 (train), 1024 (validation)
+    \item Data augmentation: Original dataset concatenated with training fold
+\end{itemize}
+
+\subsection{Hyperparameter Tuning}
+We employed \textbf{Bayesian optimization} via Optuna~\cite{optuna} to tune the gradient boosting models. Each model underwent 50 trials with 5-fold cross-validation per trial, optimizing for minimum RMSE.
+
+\textbf{LightGBM Search Space:}
+\begin{itemize}
+    \item \texttt{num\_leaves}: [20, 100]
+    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
+    \item \texttt{feature\_fraction}: [0.6, 1.0]
+    \item \texttt{bagging\_fraction}: [0.6, 1.0]
+    \item \texttt{min\_child\_samples}: [5, 50]
+    \item \texttt{reg\_alpha}, \texttt{reg\_lambda}: [0.001, 10.0] (log-scale)
+\end{itemize}
+
+\textbf{XGBoost Search Space:}
+\begin{itemize}
+    \item \texttt{max\_depth}: [3, 10]
+    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
+    \item \texttt{subsample}: [0.6, 1.0]
+    \item \texttt{colsample\_bytree}: [0.6, 1.0]
+    \item \texttt{reg\_alpha}, \texttt{reg\_lambda}: [0.001, 10.0] (log-scale)
+\end{itemize}
+
+\textbf{CatBoost Search Space:}
+\begin{itemize}
+    \item \texttt{depth}: [4, 10]
+    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
+    \item \texttt{l2\_leaf\_reg}: [1.0, 10.0]
+    \item \texttt{bagging\_temperature}: [0.0, 1.0]
+\end{itemize}
+
+Table~\ref{tab:tuned_params} presents the optimal hyperparameters discovered through this process.
