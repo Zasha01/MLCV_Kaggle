@@ -1,0 +1,19 @@
+{
+  "model": "Stacking (Ridge Meta-Learner)",
+  "rmse": 8.756686779207547,
+  "simple_avg_rmse": 8.77295845982045,
+  "improvement": 0.016271680612902628,
+  "improvement_pct": 0.18547540932087864,
+  "mean_residual": 2.8535396268125624e-15,
+  "std_residual": 8.756686779207547,
+  "min_residual": -43.422417275031265,
+  "max_residual": 48.11592516466689,
+  "mae": 6.98328128016419,
+  "meta_coefficients": {
+    "LightGBMModel": 5.456724980533966,
+    "XGBoostModel": 1.003659178820477,
+    "CatBoostModel": 10.316519251650522
+  },
+  "meta_intercept": 62.50667216507936,
+  "meta_alpha": 1.0
+}

@@ -1,0 +1,5 @@
+{
+  "LightGBMModel": 0.3315955943909671,
+  "XGBoostModel": 0.048567272832538054,
+  "CatBoostModel": 0.6198371327764949
+}
