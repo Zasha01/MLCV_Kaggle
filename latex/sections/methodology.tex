@@ -83,33 +83,44 @@ Our neural network architecture combines several modern techniques for tabular d
 \end{itemize}
 
 \subsection{Hyperparameter Tuning}
-We employed \textbf{Bayesian optimization} via Optuna~\cite{optuna} to tune the gradient boosting models. Each model underwent 50 trials with 5-fold cross-validation per trial, optimizing for minimum RMSE.
+We tuned the gradient boosting models using Bayesian optimization with Optuna~\cite{optuna}.
+For each model, we ran 50 trials and evaluated each trial using 5-fold cross-validation, minimizing the RMSE.
+The hyperparameter ranges explored for LightGBM, XGBoost, and CatBoost are summarized in Table~\ref{tab:search_space}.
+Unless stated otherwise, parameters were sampled uniformly within their ranges, while \texttt{learning\_rate}, \texttt{reg\_alpha}, and \texttt{reg\_lambda} were sampled log-uniformly to better cover multiple orders of magnitude.
+The best-performing configurations selected by Optuna for each model are reported in Table~\ref{tab:tuned_params}.
 
-\textbf{LightGBM Search Space:}
-\begin{itemize}
-    \item \texttt{num\_leaves}: [20, 100]
-    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
-    \item \texttt{feature\_fraction}: [0.6, 1.0]
-    \item \texttt{bagging\_fraction}: [0.6, 1.0]
-    \item \texttt{min\_child\_samples}: [5, 50]
-    \item \texttt{reg\_alpha}, \texttt{reg\_lambda}: [0.001, 10.0] (log-scale)
-\end{itemize}
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{Optuna search spaces used for Bayesian hyperparameter optimization.}
+\label{tab:search_space}
+\begin{tabular}{l l l}
+\hline
+\textbf{Model} & \textbf{Hyperparameter} & \textbf{Range} \\
+\hline
+\multirow{7}{*}{LightGBM}
+  & \texttt{num\_leaves}         & $[20, 100]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{feature\_fraction}   & $[0.6, 1.0]$ \\
+  & \texttt{bagging\_fraction}   & $[0.6, 1.0]$ \\
+  & \texttt{min\_child\_samples} & $[5, 50]$ \\
+  & \texttt{reg\_alpha}          & $[10^{-3}, 10]$ \\
+  & \texttt{reg\_lambda}         & $[10^{-3}, 10]$ \\
+\hline
+\multirow{6}{*}{XGBoost}
+  & \texttt{max\_depth}          & $[3, 10]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{subsample}           & $[0.6, 1.0]$ \\
+  & \texttt{colsample\_bytree}   & $[0.6, 1.0]$ \\
+  & \texttt{reg\_alpha}          & $[10^{-3}, 10]$ \\
+  & \texttt{reg\_lambda}         & $[10^{-3}, 10]$ \\
+\hline
+\multirow{4}{*}{CatBoost}
+  & \texttt{depth}               & $[4, 10]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{l2\_leaf\_reg}       & $[1, 10]$ \\
+  & \texttt{bagging\_temperature}& $[0.0, 1.0]$ \\
+\hline
+\end{tabular}
+\end{table}
 
-\textbf{XGBoost Search Space:}
-\begin{itemize}
-    \item \texttt{max\_depth}: [3, 10]
-    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
-    \item \texttt{subsample}: [0.6, 1.0]
-    \item \texttt{colsample\_bytree}: [0.6, 1.0]
-    \item \texttt{reg\_alpha}, \texttt{reg\_lambda}: [0.001, 10.0] (log-scale)
-\end{itemize}
-
-\textbf{CatBoost Search Space:}
-\begin{itemize}
-    \item \texttt{depth}: [4, 10]
-    \item \texttt{learning\_rate}: [0.01, 0.1] (log-scale)
-    \item \texttt{l2\_leaf\_reg}: [1.0, 10.0]
-    \item \texttt{bagging\_temperature}: [0.0, 1.0]
-\end{itemize}
-
-Table~\ref{tab:tuned_params} presents the optimal hyperparameters discovered through this process.
