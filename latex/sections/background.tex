@@ -41,12 +41,14 @@ specifically designed for datasets with categorical features, employing ordered
 boosting and native categorical encoding to reduce target leakage and improve
 generalization \cite{catboost}.
 
-\subsection{Ensemble Learning}
+\subsection{Ensemble Learning and Cross-Validation}
 Ensemble learning combines predictions from multiple models to improve robustness
-and predictive performance. By aggregating models with different inductive biases,
-ensembles reduce variance and exploit complementary strengths across learners.
-Common strategies include averaging, weighted ensembling, and stacking with a
-meta-learner \cite{zhou2012ensemble}.
+and predictive performance by reducing variance and exploiting complementary model
+strengths \cite{zhou2012ensemble}. To reliably estimate generalization performance
+and guide model selection, cross-validation is commonly employed. By repeatedly
+training and evaluating models on different data splits, cross-validation provides
+a robust estimate of out-of-sample error and reduces sensitivity to a single train--
+test split \cite{kohavi1995cv}.
 
 
 \subsection{Deep Learning for Tabular Data}
