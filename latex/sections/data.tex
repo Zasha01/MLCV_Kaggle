@@ -1,36 +1,60 @@
 \section{Dataset Description and Preprocessing}
-The dataset originates from the Kaggle Playground Series S6E1 competition, consisting of synthetically generated student data.
-The training set contains 630,000 samples with the target label \texttt{exam\_score}, while the test set contains 270,000 samples requiring predictions.
-
-\subsection{Feature Overview}
-The dataset contains 12 original features (excluding \texttt{id}), split into:
-\begin{itemize}
-    \item \textbf{Numerical (4)}: age (17--24), study\_hours (0.08--7.91), class\_attendance (40.6--99.4\%), sleep\_hours (4.1--9.9)
-    \item \textbf{Categorical (7)}: gender, course (B.Tech, B.Sc, etc.), internet\_access, sleep\_quality (good/average/poor), study\_method, facility\_rating, exam\_difficulty
-\end{itemize}
-
-\noindent The target variable \texttt{exam\_score} has the following distribution:
-\begin{itemize}
-    \item Mean: 62.51, Standard Deviation: 18.92
-    \item Range: 19.60 -- 100.00
-    \item Skewness: -0.048 (approximately symmetric)
-\end{itemize}
-
-\begin{figure}[t]
+We use the dataset provided in the Kaggle Playground Series S6E1 benchmark, which consists of synthetically generated student records derived from a model trained on real student performance data.
+The training split contains 630{,}000 samples with the target label \texttt{exam\_score}, and the test split contains 270{,}000 samples used for final prediction. Figure~\ref{fig:target_distribution} visualizes the distribution of \texttt{exam\_score}, which is approximately symmetric and concentrated around mid-range values.
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.98\linewidth]{target_distribution.png}
 \caption{Distribution of the target variable \texttt{exam\_score} (histogram and box plot).}
 \label{fig:target_distribution}
 \end{figure}
+\subsection{Feature Overview}
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{Numerical input features.}
+\label{tab:num_features}
+\begin{tabular}{ll}
+\hline
+\textbf{Feature} & \textbf{Range} \\
+\hline
+\texttt{age} & 17--24 \\
+\texttt{study\_hours} & 0.08--7.91 \\
+\texttt{class\_attendance} & 40.6--99.4\% \\
+\texttt{sleep\_hours} & 4.1--9.9 \\
+\hline
+\end{tabular}
+\end{table}
 
-\subsection{Data Cleaning}
-We performed the following preprocessing steps:
-\begin{itemize}
-    \item Verified \textbf{no missing values} in both training and test sets.
-    \item Applied label encoding for categorical variables.
-    \item Implemented CV-safe target encoding to prevent data leakage.
-    \item Added frequency encoding for categorical features.
-\end{itemize}
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{Categorical input features.}
+\label{tab:cat_features}
+\begin{tabular}{ll}
+\hline
+\textbf{Feature} & \textbf{Categories} \\
+\hline
+\texttt{gender} & male, female \\
+\texttt{course} & B.Tech, B.Sc, etc. \\
+\texttt{internet\_access} & yes, no \\
+\texttt{sleep\_quality} & good, average, poor \\
+\texttt{study\_method} & category labels \\
+\texttt{facility\_rating} & category labels \\
+\texttt{exam\_difficulty} & category labels \\
+\hline
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:num_features} and Table~\ref{tab:cat_features} summarize the numerical and categorical input variables.
+
+
+
+\subsection{Preprocessing}
+
+We verified that the dataset contains no missing values in either the training or test split.
+Categorical variables were converted into numerical representations using label encoding, and we additionally applied frequency encoding to capture category prevalence.
+To incorporate target-dependent information while avoiding leakage, we implemented cross-validation-safe target encoding, where category statistics are computed using only the training folds and then applied to the corresponding validation fold.
+All preprocessing steps were applied consistently across training and test data to ensure compatibility with both tree-based models and neural architectures.
 
 \subsection{Exploratory Data Analysis (EDA)}
 In this subsection, we perform exploratory data analysis to identify the most informative numerical predictors of the target \texttt{exam\_score} and to motivate subsequent modeling choices.
