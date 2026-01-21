@@ -1,60 +1,53 @@
 \section{Technical Background}
 
-This work addresses a supervised learning problem in the form of regression. Given a dataset
-$\{(\mathbf{x}_i, y_i)\}_{i=1}^{N}$, where $\mathbf{x}_i \in \mathbb{R}^d$ denotes a feature vector
-describing a student and $y_i \in \mathbb{R}$ represents the corresponding exam score, the goal is
-to learn a function $f: \mathbb{R}^d \rightarrow \mathbb{R}$ that accurately predicts exam scores
-for unseen samples.
-
 \subsection{Supervised Regression}
-Regression problems aim to predict continuous-valued targets and are well suited for modeling
-exam scores, where both ordering and magnitude of prediction errors are meaningful. Unlike
-classification, regression allows the model to capture fine-grained differences between student
-outcomes, which is essential for performance evaluation in this task.
+Supervised regression aims to learn a mapping from input features to a continuous target variable using labeled data. Given a dataset
+$\{(x_i, y_i)\}_{i=1}^N$, where $x_i \in \mathbb{R}^d$ and $y_i \in \mathbb{R}$,
+the objective is to learn a function $f : \mathbb{R}^d \rightarrow \mathbb{R}$
+that generalizes well to unseen samples. Regression is well suited for predicting
+exam scores, where both the magnitude and direction of prediction errors are
+meaningful \cite{hastie2009elements}.
 
 \subsection{Evaluation Metric}
-Model performance is evaluated using Root Mean Squared Error (RMSE), defined as
+Model performance is evaluated using \emph{Root Mean Squared Error (RMSE)}:
 \begin{equation}
-\mathrm{RMSE} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2},
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2}.
 \end{equation}
-where $y_i$ is the true exam score and $\hat{y}_i$ is the predicted value. RMSE penalizes larger
-errors more heavily than absolute-error metrics, making it particularly suitable for detecting
-poor predictions on extreme exam scores. The metric is commonly used in regression benchmarks
-and is the official evaluation criterion of the Kaggle competition.
+RMSE penalizes larger errors more strongly than absolute-error metrics, making it
+sensitive to poor predictions on extreme values. It is a standard metric for
+regression benchmarks and the official evaluation criterion of the Kaggle
+competition considered in this work \cite{kagglemetrics}.
 
-\subsection{Linear Models and Regularization}
-Linear regression models assume a linear relationship between the input features and the target:
-\begin{equation}
-\hat{y} = \mathbf{w}^\top \mathbf{x} + b.
-\end{equation}
-While simple and interpretable, linear models often struggle with nonlinear interactions present
-in real-world tabular data. Ridge Regression extends linear regression by adding an $L_2$
-regularization term to the loss function, discouraging large coefficients and reducing overfitting,
-particularly in high-dimensional feature spaces.
+\subsection{Tree-Based and Gradient Boosted Models}
+Tree-based models partition the feature space using decision rules, allowing them
+to capture nonlinear relationships and feature interactions. While individual
+decision trees are flexible and interpretable, they are prone to high variance
+and limited generalization ability \cite{hastie2009elements}.
 
-\subsection{Tree-Based Models}
-Decision trees model nonlinear relationships by recursively partitioning the feature space based
-on threshold splits. They naturally handle mixed numerical and categorical data but are prone to
-high variance when used individually. Ensemble methods mitigate this issue by combining multiple
-trees to improve generalization.
+Gradient Boosted Decision Trees (GBDTs) mitigate this limitation by constructing
+trees sequentially, where each new tree is trained to correct the residual errors
+of the current ensemble. This process can be interpreted as gradient descent in
+function space with respect to a specified loss function \cite{friedman2001gbm}.
+GBDTs are particularly effective for tabular data and form the basis of several
+widely used implementations.
 
-\subsection{Gradient Boosted Decision Trees}
-Gradient boosting is a powerful ensemble technique that builds models sequentially, where each
-new tree is trained to correct the residual errors of the previous ensemble. This process can be
-interpreted as gradient descent in function space, minimizing a specified loss function. Gradient
-Boosted Decision Trees (GBDTs) are particularly effective for tabular datasets due to their ability
-to capture nonlinear feature interactions and handle heterogeneous data types.
-
-Popular GBDT implementations include XGBoost, LightGBM, and CatBoost. While all follow the same
-boosting principle, they differ in optimization strategies and handling of categorical features.
-CatBoost, in particular, incorporates ordered boosting and native categorical feature processing,
-often resulting in improved performance on datasets with many categorical variables.
+Among these, XGBoost, LightGBM, and CatBoost follow the same boosting principle but
+differ in practical design choices. XGBoost uses level-wise tree growth with strong
+regularization, providing robust performance across a wide range of datasets
+\cite{xgboost}. LightGBM adopts a leaf-wise growth strategy with depth
+constraints, enabling faster training and improved accuracy on large datasets,
+though with increased overfitting risk \cite{lightgbm}. CatBoost is
+specifically designed for datasets with categorical features, employing ordered
+boosting and native categorical encoding to reduce target leakage and improve
+generalization \cite{catboost}.
 
 \subsection{Ensemble Learning}
-Ensemble learning combines predictions from multiple models to achieve improved robustness and
-generalization. By aggregating models with different inductive biases, ensembles reduce variance
-and exploit complementary strengths. In this work, both simple averaging, weighted ensembling,
-and stacking with a meta-learner are considered to further enhance predictive performance.
+Ensemble learning combines predictions from multiple models to improve robustness
+and predictive performance. By aggregating models with different inductive biases,
+ensembles reduce variance and exploit complementary strengths across learners.
+Common strategies include averaging, weighted ensembling, and stacking with a
+meta-learner \cite{zhou2012ensemble}.
+
 
 \subsection{Deep Learning for Tabular Data}
 While gradient boosting methods have traditionally dominated tabular data competitions, recent
