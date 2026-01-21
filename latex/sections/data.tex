@@ -33,20 +33,23 @@ We performed the following preprocessing steps:
 \end{itemize}
 
 \subsection{Exploratory Data Analysis (EDA)}
-EDA revealed important relationships between features and exam scores:
-\begin{itemize}
-    \item \textbf{study\_hours} shows the strongest correlation (r = 0.762) with exam score.
-    \item \textbf{class\_attendance} has moderate positive correlation (r = 0.361).
-    \item \textbf{sleep\_hours} exhibits weak positive correlation (r = 0.167).
-    \item \textbf{age} shows negligible correlation (r = 0.011).
-\end{itemize}
+In this subsection, we perform exploratory data analysis to identify the most informative numerical predictors of the target \texttt{exam\_score} and to motivate subsequent modeling choices.
+As summarized in the Pearson correlation matrix (Figure~\ref{fig:corr_matrix}), \texttt{study\_hours} exhibits the strongest linear association with the target ($r=0.762$), making it the most relevant numerical feature.
+\texttt{class\_attendance} shows a moderate positive correlation with exam performance ($r=0.361$), while \texttt{sleep\_hours} has a weaker but still positive relationship ($r=0.167$).
+In contrast, \texttt{age} has negligible correlation with \texttt{exam\_score} ($r=0.011$), suggesting limited predictive value as a standalone input.
 
-\noindent Figure~\ref{fig:corr_matrix} summarizes linear correlations among numerical variables, while Figures~\ref{fig:scatter_num_target} and \ref{fig:cat_boxplots} illustrate feature-target relationships for numerical and categorical variables.
+These findings are consistent with the scatter plots in Figure~\ref{fig:scatter_num_target}.
+\texttt{study\_hours} displays a clear upward trend with relatively tight alignment around the fitted line, whereas \texttt{class\_attendance} shows a weaker trend with substantially higher dispersion.
+\texttt{sleep\_hours} exhibits only a mild positive trend and considerable variance across the score range.
+Finally, \texttt{age} appears as discrete vertical bands with no meaningful slope, reinforcing the absence of a strong linear relationship.
+
+Beyond feature-target relationships, Figure~\ref{fig:corr_matrix} also indicates low pairwise correlations among the numerical predictors, suggesting limited multicollinearity within the numerical subset.
+Overall, the EDA identifies \texttt{study\_hours}, \texttt{class\_attendance}, and \texttt{sleep\_hours} as the three most relevant numerical features for predicting exam scores, motivating the use of interaction features and nonlinear models in later sections.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.98\linewidth]{correlation_matrix.png}
-\caption{Correlation matrix of numerical features and the target.}
+\caption{Pearson correlation matrix of numerical features and the target \texttt{exam\_score}.}
 \label{fig:corr_matrix}
 \end{figure}
 
@@ -56,6 +59,3 @@ EDA revealed important relationships between features and exam scores:
 \caption{Scatter plots of numerical features versus \texttt{exam\_score} with linear trend lines (sampled for visualization).}
 \label{fig:scatter_num_target}
 \end{figure*}
-
-
-\noindent Categorical variables like \texttt{sleep\_quality}, \texttt{study\_method}, and \texttt{facility\_rating} showed meaningful differences in score distributions across categories.
