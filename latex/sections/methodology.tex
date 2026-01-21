@@ -1,88 +1,85 @@
 \section{Methodology}
-Our modeling pipeline follows a systematic approach from baseline models to advanced ensembles.
+Our modeling pipeline progresses from tabular baselines to tuned gradient boosting models, ensembling, and a neural architecture for tabular data.
+
 
 \subsection{Validation Strategy}
-To ensure reliable performance estimation and prevent overfitting:
-\begin{itemize}
-    \item \textbf{5-fold cross-validation} with shuffle (random seed = 42)
-    \item Consistent fold splits across all models for fair comparison
-    \item Out-of-fold (OOF) predictions stored for ensemble optimization
-\end{itemize}
+All experiments use 5-fold cross-validation with shuffling (random seed 42) to obtain reliable performance estimates and reduce overfitting.
+We reuse the same fold splits across all models to ensure fair comparison, and we store out-of-fold (OOF) predictions for ensemble construction and weight optimization.
+
 
 \subsection{Feature Engineering}
-We expanded from 12 original features to \textbf{44 engineered features}:
-\begin{itemize}
-    \item \textbf{Interaction features}: study\_hours $\times$ class\_attendance, study\_hours $\times$ sleep\_hours, etc.
-    \item \textbf{Ratio features}: attendance\_per\_hour, sleep\_per\_study
-    \item \textbf{Polynomial features}: squared and cubed terms for key numerical variables
-    \item \textbf{Binary flags}: is\_low\_sleep ($<$6h), is\_high\_attendance ($>$80\%), is\_high\_study ($>$6h)
-    \item \textbf{Domain formula}: $6.0 \times \text{study\_hours} + 0.35 \times \text{attendance} + 1.5 \times \text{sleep\_hours}$
-    \item \textbf{Target encoding}: CV-safe mean encoding for all categorical features
-    \item \textbf{Frequency encoding}: Category frequency as additional features
-\end{itemize}
+Starting from 12 original features, we construct a set of 44 features to capture nonlinearities, interactions, and category-specific effects.
+For numerical variables, we include pairwise interaction terms (e.g., \texttt{study\_hours} $\times$ \texttt{class\_attendance}), ratio features (e.g., attendance-per-hour), and polynomial expansions (squared and cubic terms) for the most relevant predictors.
+We additionally introduce threshold-based indicator variables (e.g., low sleep and high study intensity) and a composite score based on domain intuition:
+\begin{equation}
+S = 6.0h + 0.35a + 1.5s,
+\label{eq:domain_score}
+\end{equation} where $h=\texttt{study\_hours}$, $a=\texttt{class\_attendance}$, and $s=\texttt{sleep\_hours}$.
+Categorical variables are encoded using label encoding and augmented with CV-safe target encoding and frequency encoding to expose category-specific signal while avoiding leakage.
+
 
 \subsection{Models Evaluated}
-We evaluated models of increasing complexity:
+We evaluate four groups of regressors: classical baselines, gradient-boosted decision trees, ensemble methods, and a neural model for tabular data.
 
-\textbf{Baseline Models:}
-\begin{itemize}
-    \item Ridge Regression ($\alpha = 10.0$) with standardized features
-    \item Random Forest (100 trees, max\_depth=15, min\_samples\_leaf=10)
-\end{itemize}
+\subsubsection{Baselines}
+As classical baselines, we train Ridge regression ($\alpha=10.0$) on standardized features and a Random Forest regressor with 100 trees (max depth 15, minimum leaf size 10).
 
-\textbf{Gradient Boosting Models:}
-\begin{itemize}
-    \item LightGBM (learning\_rate=0.05, num\_leaves=31, early stopping at 100 rounds)
-    \item XGBoost (learning\_rate=0.05, max\_depth=6, tree\_method=hist)
-    \item CatBoost (learning\_rate=0.05, depth=6, l2\_leaf\_reg=3)
-\end{itemize}
+\subsubsection{Gradient-Boosted Decision Trees}
+We benchmark three gradient-boosted decision tree implementations: LightGBM, XGBoost, and CatBoost.
+Early stopping is applied where supported to mitigate overfitting, and final model settings are selected either from baseline configurations or via the tuning procedure described in Section~\ref{sec:hpo}.
 
-\textbf{Ensemble Methods:}
-\begin{itemize}
-    \item Simple average of LightGBM, XGBoost, CatBoost predictions
-    \item Weighted ensemble with Nelder-Mead optimized weights on OOF predictions
-    \item Stacking ensemble with Ridge regression meta-learner
-\end{itemize}
+\subsubsection{Ensemble Methods}
+We evaluate three ensemble strategies built from the gradient-boosted models.
+These include a simple mean blend, a weighted blend with weights optimized on out-of-fold predictions using Nelder--Mead, and stacking with a Ridge regression meta-learner.
 
-\textbf{Deep Learning Model (SE-ResNet):}
-\begin{itemize}
-    \item Neural network with entity embeddings for categorical features
-    \item Residual blocks with Squeeze-and-Excitation attention mechanism
-    \item Data augmentation using original dataset (not just competition data)
-\end{itemize}
+\subsubsection{Neural Tabular Model}
+Finally, we evaluate SE-ResNet, a neural architecture for mixed categorical--numerical data that combines entity embeddings with residual blocks and Squeeze-and-Excitation attention.
+
 
 \subsection{SE-ResNet Architecture}
-Our neural network architecture combines several modern techniques for tabular data:
+To model nonlinear interactions in mixed categorical--numerical inputs, we employ a tabular neural network based on residual learning with Squeeze-and-Excitation (SE) attention.
+Numerical features are standardized and augmented with selected engineered transformations, while each categorical feature is mapped to a learnable embedding.
+All inputs are concatenated and projected to a fixed hidden width, followed by multiple residual blocks with channel-wise attention.
+The model outputs a single scalar prediction for \texttt{exam\_score}.
+In addition to the composite score $S$ defined in Eq.~\eqref{eq:domain_score}, we include a calibrated variant as an additional neural input:
+\begin{equation}
+\begin{aligned}
+\tilde{S} &= 5.91h + 0.35a + 1.42s + 4.78,
+\end{aligned}
+\label{eq:domain_score_nn}
+\end{equation}
+where $h=\texttt{study\_hours}$, $a=\texttt{class\_attendance}$, and $s=\texttt{sleep\_hours}$. Table~\ref{tab:seresnet_config} summarizes the SE-ResNet architecture and training configuration used in our experiments.
 
-\textbf{Input Processing:}
-\begin{itemize}
-    \item Numerical features: StandardScaler normalization, plus engineered features (log transforms, squared terms, sinusoidal encodings, frequency counts)
-    \item Categorical features: Learnable embeddings with dimension $d=8$ per category
-    \item Domain formula: $5.91 \times \text{study\_hours} + 0.35 \times \text{attendance} + 1.42 \times \text{sleep\_hours} + 4.78$
-\end{itemize}
+\begin{table}[t]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{SE-ResNet configuration used in our experiments.}
+\label{tab:seresnet_config}
+\begin{tabular}{l l}
+\hline
+\textbf{Component} & \textbf{Setting} \\
+\hline
+Categorical representation & entity embeddings, $d=8$ per feature \\
+Input projection & 256 hidden dimensions \\
+Residual blocks & 3 blocks \\
+Block structure & LayerNorm $\rightarrow$ Linear $\rightarrow$ ReLU $\rightarrow$ Dropout \\
+Dropout & 0.11 \\
+SE module & reduction ratio $r=4$ \\
+Prediction head & 256 $\rightarrow$ 64 $\rightarrow$ 16 $\rightarrow$ 1 \\
+Optimizer & AdamW (lr=$10^{-3}$, weight decay=$10^{-4}$) \\
+LR scheduler & ReduceLROnPlateau (factor 0.5, patience 10) \\
+Early stopping & patience 20 epochs \\
+Batch size & 256 (train), 1024 (validation) \\
+Data augmentation & auxiliary original dataset added to training folds \\
+\hline
+\end{tabular}
+\end{table}
 
-\textbf{Network Architecture:}
-\begin{itemize}
-    \item Projection layer: Concatenated inputs $\rightarrow$ 256 hidden dimensions
-    \item 3 residual blocks, each containing:
-    \begin{itemize}
-        \item LayerNorm $\rightarrow$ Linear $\rightarrow$ ReLU $\rightarrow$ Dropout (0.11)
-        \item SE block with reduction ratio $r=4$
-        \item Skip connection
-    \end{itemize}
-    \item Prediction head: 256 $\rightarrow$ 64 $\rightarrow$ 16 $\rightarrow$ 1
-\end{itemize}
 
-\textbf{Training Configuration:}
-\begin{itemize}
-    \item Optimizer: AdamW (lr=$10^{-3}$, weight decay=$10^{-4}$)
-    \item Scheduler: ReduceLROnPlateau (factor=0.5, patience=10)
-    \item Early stopping: patience=20 epochs
-    \item Batch size: 256 (train), 1024 (validation)
-    \item Data augmentation: Original dataset concatenated with training fold
-\end{itemize}
+
 
 \subsection{Hyperparameter Tuning}
+\label{sec:hpo}
 We tuned the gradient boosting models using Bayesian optimization with Optuna~\cite{optuna}.
 For each model, we ran 50 trials and evaluated each trial using 5-fold cross-validation, minimizing the RMSE.
 The hyperparameter ranges explored for LightGBM, XGBoost, and CatBoost are summarized in Table~\ref{tab:search_space}.
