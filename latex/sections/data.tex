@@ -1,52 +1,43 @@
 \section{Dataset Description and Preprocessing}
 We use the dataset provided in the Kaggle Playground Series S6E1 benchmark, which consists of synthetically generated student records derived from a model trained on real student performance data.
 The training split contains 630{,}000 samples with the target label \texttt{exam\_score}, and the test split contains 270{,}000 samples used for final prediction. Figure~\ref{fig:target_distribution} visualizes the distribution of \texttt{exam\_score}, which is approximately symmetric and concentrated around mid-range values.
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \includegraphics[width=0.98\linewidth]{target_distribution.png}
 \caption{Distribution of the target variable \texttt{exam\_score} (histogram and box plot).}
 \label{fig:target_distribution}
 \end{figure}
 \subsection{Feature Overview}
-\begin{table}[h]
-\centering
-\renewcommand{\arraystretch}{1.1}
-\caption{Numerical input features.}
-\label{tab:num_features}
-\begin{tabular}{ll}
-\hline
-\textbf{Feature} & \textbf{Range} \\
-\hline
-\texttt{age} & 17--24 \\
-\texttt{study\_hours} & 0.08--7.91 \\
-\texttt{class\_attendance} & 40.6--99.4\% \\
-\texttt{sleep\_hours} & 4.1--9.9 \\
-\hline
-\end{tabular}
-\end{table}
+
 
 \begin{table}[h]
 \centering
 \renewcommand{\arraystretch}{1.1}
-\caption{Categorical input features.}
-\label{tab:cat_features}
-\begin{tabular}{ll}
+\caption{Overview of input features.}
+\label{tab:feature_overview}
+\begin{tabular}{l l l}
 \hline
-\textbf{Feature} & \textbf{Categories} \\
+\textbf{Type} & \textbf{Feature} & \textbf{Range / Categories} \\
 \hline
-\texttt{gender} & male, female \\
-\texttt{course} & B.Tech, B.Sc, etc. \\
-\texttt{internet\_access} & yes, no \\
-\texttt{sleep\_quality} & good, average, poor \\
-\texttt{study\_method} & category labels \\
-\texttt{facility\_rating} & category labels \\
-\texttt{exam\_difficulty} & category labels \\
+\multirow{4}{*}{Numerical} 
+  & \texttt{age}              & 17--24 \\
+  & \texttt{study\_hours}     & 0.08--7.91 \\
+  & \texttt{class\_attendance}& 40.6--99.4\% \\
+  & \texttt{sleep\_hours}     & 4.1--9.9 \\
+\hline
+\multirow{7}{*}{Categorical}
+  & \texttt{gender}           & male, female \\
+  & \texttt{course}           & B.Tech, B.Sc, etc. \\
+  & \texttt{internet\_access} & yes, no \\
+  & \texttt{sleep\_quality}   & good, average, poor \\
+  & \texttt{study\_method}    & category labels \\
+  & \texttt{facility\_rating} & category labels \\
+  & \texttt{exam\_difficulty} & category labels \\
 \hline
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:num_features} and Table~\ref{tab:cat_features} summarize the numerical and categorical input variables.
-
+Table~\ref{tab:feature_overview} summarizes the numerical and categorical input variables.
 
 
 \subsection{Preprocessing}
