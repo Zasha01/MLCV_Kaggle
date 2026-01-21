@@ -1,15 +1,10 @@
 \section{Introduction}
-Academic performance prediction is a significant machine learning application with implications for personalized learning and early intervention systems.
-In this work, we address the Kaggle Playground Series S6E1 competition, where the objective is to predict student exam scores from behavioral and contextual features including study hours, class attendance, sleep patterns, and study methodology.
+Predicting academic performance from student- and study-related factors is a practical regression problem with applications in personalized learning and early identification of students who may benefit from intervention.
+From a modeling perspective, the relationship between behavioral variables such as study time, attendance, and sleep and exam outcomes is often nonlinear and shaped by interactions, which makes the task a useful benchmark for tabular machine learning methods.
 
-The dataset comprises 630,000 training samples and 270,000 test samples, generated synthetically from a deep learning model trained on real exam score data.
-This provides a controlled environment to compare various machine learning approaches.
+We evaluate our methods on the Kaggle Playground Series S6E1 benchmark for predicting student exam scores using study habits and contextual factors.
 
-The main contributions of this paper are:
-\begin{itemize}
-    \item A comprehensive exploratory analysis revealing that \texttt{study\_hours} (r=0.76) is the strongest predictor of exam scores.
-    \item Feature engineering expanding 12 original features to 44 derived features including interactions, target encoding, and domain-specific formulas.
-    \item Comparison of 7 regression models from Ridge to gradient boosting ensembles.
-    \item Achievement of 8.7568 CV RMSE using an optimized weighted ensemble of CatBoost, LightGBM, and XGBoost.
-    \item Analysis of feature importance and prediction error patterns.
-\end{itemize}
+The dataset is synthetically generated from a model trained on real student performance data, providing a consistent benchmark for evaluating tabular learning methods.
+
+Our experiments compare three model families: classical baselines (e.g., linear and random-forest regressors), gradient-boosted decision trees, and neural architectures for tabular data.
+We study how feature engineering and hyperparameter optimization affect these families under cross-validation, and we complement performance evaluation with interpretability analyses based on feature importance, SHAP, and prediction error patterns.
