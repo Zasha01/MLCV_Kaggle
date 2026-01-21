@@ -20,21 +20,15 @@ Table~\ref{tab:results} summarizes the performance of each method, sorted by CV 
 Stacking (Ridge Meta) & 8.7567 & -- \\
 Ensemble (Optimized) & 8.7568 & -- \\
 CatBoost & 8.7618 & $\pm$0.0101 \\
-LightGBM & 8.7724 & $\pm$0.0089 \\
+LightGBM & 8.7658 & $\pm$0.0089 \\
 Ensemble (Simple) & 8.7730 & -- \\
 Ridge Regression & 8.8887 & $\pm$0.0105 \\
 Random Forest & 8.9095 & $\pm$0.0109 \\
-XGBoost & 8.9271 & $\pm$0.1928 \\
+XGBoost & 8.8220 & $\pm$0.1928 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.98\linewidth]{model_comparison_with_ensemble.png}
-\caption{Cross-validation RMSE comparison across all models and ensembles (lower is better).}
-\label{fig:model_comparison}
-\end{figure}
 
 \noindent Key observations:
 \begin{itemize}
@@ -57,7 +51,7 @@ Bayesian optimization with Optuna (50 trials per model) yielded significant impr
 \midrule
 LightGBM & 8.7724 & 8.7658 & 0.0066 (0.08\%) \\
 XGBoost & 8.9271 & 8.8220 & \textbf{0.1051 (1.18\%)} \\
-CatBoost & 8.7618 & 8.7808 & -0.0190 (-0.22\%) \\
+CatBoost & 8.7808 & 8.7618 & 0.0190 (0.22\%) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -191,13 +185,6 @@ study\_method\_freq & 1.75 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.98\linewidth]{feature_importance.png}
-\caption{Feature importance for the best single model (CatBoost). The engineered \texttt{formula\_score} and category encodings dominate.}
-\label{fig:feature_importance}
-\end{figure}
 
 \noindent The engineered \texttt{formula\_score} feature dominates, followed by encodings of \texttt{sleep\_quality} and \texttt{study\_method}, confirming that feature engineering significantly improved predictive power.
 
