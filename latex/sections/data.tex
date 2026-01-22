@@ -1,6 +1,12 @@
 \section{Dataset Description and Preprocessing}
-We use the dataset provided in the Kaggle Playground Series S6E1 benchmark, which consists of synthetically generated student records derived from a model trained on real student performance data.
-The training split contains 630{,}000 samples with the target label \texttt{exam\_score}, and the test split contains 270{,}000 samples used for final prediction. Figure~\ref{fig:target_distribution} visualizes the distribution of \texttt{exam\_score}, which is approximately symmetric and concentrated around mid-range values.
+We use the dataset provided in the Kaggle Playground Series S6E1 benchmark, which
+consists of synthetically generated student records derived from a model trained
+on real student performance data. The training split contains 630{,}000 samples
+with the target variable \texttt{exam\_score}, while the test split contains
+270{,}000 samples used for final prediction. Figure~\ref{fig:target_distribution}
+visualizes the distribution of \texttt{exam\_score}, which is approximately
+symmetric and concentrated around mid-range values.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.98\linewidth]{target_distribution.png}
@@ -8,7 +14,8 @@ The training split contains 630{,}000 samples with the target label \texttt{exam
 \label{fig:target_distribution}
 \end{figure}
 \subsection{Feature Overview}
-
+Table~\ref{tab:feature_overview}  summarizes the numerical and categorical input
+variables.
 
 \begin{table}[h]
 \centering
@@ -20,46 +27,53 @@ The training split contains 630{,}000 samples with the target label \texttt{exam
 \textbf{Type} & \textbf{Feature} & \textbf{Range / Categories} \\
 \hline
 \multirow{4}{*}{Numerical} 
-  & \texttt{age}              & 17--24 \\
-  & \texttt{study\_hours}     & 0.08--7.91 \\
-  & \texttt{class\_attendance}& 40.6--99.4\% \\
-  & \texttt{sleep\_hours}     & 4.1--9.9 \\
+  & \texttt{age}               & 17--24 \\
+  & \texttt{study\_hours}      & 0.08--7.91 \\
+  & \texttt{class\_attendance} & 40.6--99.4\% \\
+  & \texttt{sleep\_hours}      & 4.1--9.9 \\
 \hline
 \multirow{7}{*}{Categorical}
-  & \texttt{gender}           & male, female \\
-  & \texttt{course}           & B.Tech, B.Sc, etc. \\
-  & \texttt{internet\_access} & yes, no \\
-  & \texttt{sleep\_quality}   & good, average, poor \\
-  & \texttt{study\_method}    & category labels \\
-  & \texttt{facility\_rating} & category labels \\
-  & \texttt{exam\_difficulty} & category labels \\
+  & \texttt{gender}            & male, female \\
+  & \texttt{course}            & B.Tech, B.Sc, etc. \\
+  & \texttt{internet\_access}  & yes, no \\
+  & \texttt{sleep\_quality}    & good, average, poor \\
+  & \texttt{study\_method}     & category labels \\
+  & \texttt{facility\_rating}  & category labels \\
+  & \texttt{exam\_difficulty}  & category labels \\
 \hline
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:feature_overview} summarizes the numerical and categorical input variables.
-
-
 \subsection{Preprocessing}
+We verified that the dataset contains no missing values in
+either the training or test split. Categorical variables were
+converted into numerical representations using label encoding, 
+and we additionally applied frequency encoding to capture 
+category prevalence. To incorporate target-dependent information
+while avoiding leakage, we implemented cross-validation-safe
+target encoding, where category statistics are computed using
+only the training folds and then applied to the corresponding
+validation fold. All preprocessing steps were applied consistently 
+across training and test data to ensure compatibility with
+both tree-based models and neural architectures.
 
-We verified that the dataset contains no missing values in either the training or test split.
-Categorical variables were converted into numerical representations using label encoding, and we additionally applied frequency encoding to capture category prevalence.
-To incorporate target-dependent information while avoiding leakage, we implemented cross-validation-safe target encoding, where category statistics are computed using only the training folds and then applied to the corresponding validation fold.
-All preprocessing steps were applied consistently across training and test data to ensure compatibility with both tree-based models and neural architectures.
+\subsection{Exploratory Data Analysis}
+Exploratory analysis was conducted to assess relationships between numerical
+features and the target variable. As shown in
+Figure~\ref{fig:corr_matrix}, \texttt{study\_hours} exhibits the strongest linear
+association with \texttt{exam\_score} ($r=0.762$), followed by
+\texttt{class\_attendance} ($r=0.361$) and \texttt{sleep\_hours} ($r=0.167$).
+In contrast, \texttt{age} shows negligible correlation ($r=0.011$).
 
-\subsection{Exploratory Data Analysis (EDA)}
-In this subsection, we perform exploratory data analysis to identify the most informative numerical predictors of the target \texttt{exam\_score} and to motivate subsequent modeling choices.
-As summarized in the Pearson correlation matrix (Figure~\ref{fig:corr_matrix}), \texttt{study\_hours} exhibits the strongest linear association with the target ($r=0.762$), making it the most relevant numerical feature.
-\texttt{class\_attendance} shows a moderate positive correlation with exam performance ($r=0.361$), while \texttt{sleep\_hours} has a weaker but still positive relationship ($r=0.167$).
-In contrast, \texttt{age} has negligible correlation with \texttt{exam\_score} ($r=0.011$), suggesting limited predictive value as a standalone input.
-
-These findings are consistent with the scatter plots in Figure~\ref{fig:scatter_num_target}.
-\texttt{study\_hours} displays a clear upward trend with relatively tight alignment around the fitted line, whereas \texttt{class\_attendance} shows a weaker trend with substantially higher dispersion.
-\texttt{sleep\_hours} exhibits only a mild positive trend and considerable variance across the score range.
-Finally, \texttt{age} appears as discrete vertical bands with no meaningful slope, reinforcing the absence of a strong linear relationship.
-
-Beyond feature-target relationships, Figure~\ref{fig:corr_matrix} also indicates low pairwise correlations among the numerical predictors, suggesting limited multicollinearity within the numerical subset.
-Overall, the EDA identifies \texttt{study\_hours}, \texttt{class\_attendance}, and \texttt{sleep\_hours} as the three most relevant numerical features for predicting exam scores, motivating the use of interaction features and nonlinear models in later sections.
+These findings are consistent with the scatter plots in
+Figure~\ref{fig:scatter_num_target}, which indicate a clear positive relationship
+between study time and exam performance, weaker but positive effects for
+attendance and sleep duration, and no meaningful trend for age. Low pairwise
+correlations among numerical features suggest limited multicollinearity.
+Overall, the analysis identifies \texttt{study\_hours},
+\texttt{class\_attendance}, and \texttt{sleep\_hours} as the most informative
+numerical predictors, motivating the use of interaction features and nonlinear
+models in later sections.
 
 \begin{figure}[t]
 \centering

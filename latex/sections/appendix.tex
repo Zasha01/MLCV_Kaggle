@@ -1,7 +1,9 @@
 \appendix
-\section{Reproducibility Details}
-All experiments used a fixed random seed (SEED=42) for dataset splitting and cross-validation.
-Implementation was done in Python using:
+\section{Reproducibility and Implementation Details}
+\label{app:repro}
+
+All experiments used a fixed random seed (SEED=42) for dataset splitting and
+cross-validation. Implementation was done in Python using:
 \begin{itemize}
     \item pandas, numpy for data manipulation
     \item scikit-learn for preprocessing and baseline models
@@ -9,12 +11,15 @@ Implementation was done in Python using:
     \item scipy for ensemble weight optimization
 \end{itemize}
 
-\section{Hyperparameters}
-Tables~\ref{tab:hparams_lgb}, \ref{tab:hparams_cat}, and \ref{tab:hparams_xgb} report hyperparameters for each gradient boosting model.
+\subsection{Final Model Hyperparameters}
+\label{app:final_hparams}
+Tables~\ref{tab:hparams_lgb}, \ref{tab:hparams_cat}, and \ref{tab:hparams_xgb}
+report the final hyperparameter configurations used for training the gradient
+boosting models in all experiments.
 
 \begin{table}[H]
 \centering
-\caption{LightGBM Hyperparameters}
+\caption{LightGBM final hyperparameters}
 \label{tab:hparams_lgb}
 \begin{tabular}{l c}
 \toprule
@@ -34,7 +39,7 @@ early\_stopping\_rounds & 100 \\
 
 \begin{table}[H]
 \centering
-\caption{CatBoost Hyperparameters}
+\caption{CatBoost final hyperparameters}
 \label{tab:hparams_cat}
 \begin{tabular}{l c}
 \toprule
@@ -51,7 +56,7 @@ early\_stopping\_rounds & 100 \\
 
 \begin{table}[H]
 \centering
-\caption{XGBoost Hyperparameters}
+\caption{XGBoost final hyperparameters}
 \label{tab:hparams_xgb}
 \begin{tabular}{l c}
 \toprule
@@ -69,7 +74,50 @@ early\_stopping\_rounds & 100 \\
 \end{tabular}
 \end{table}
 
-\section{Ensemble Weights}
+\subsection{Optuna Hyperparameter Search Spaces}
+\label{app:search_spaces}
+The hyperparameter ranges explored during Bayesian optimization with Optuna are
+summarized in Table~\ref{tab:search_space}. These search spaces define the bounds
+within which Optuna sampled configurations during the tuning process described
+in Section~IV.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\caption{Optuna search spaces used for Bayesian hyperparameter optimization.}
+\label{tab:search_space}
+\begin{tabular}{l l l}
+\hline
+\textbf{Model} & \textbf{Hyperparameter} & \textbf{Range} \\
+\hline
+\multirow{7}{*}{LightGBM}
+  & \texttt{num\_leaves}         & $[20, 100]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{feature\_fraction}   & $[0.6, 1.0]$ \\
+  & \texttt{bagging\_fraction}   & $[0.6, 1.0]$ \\
+  & \texttt{min\_child\_samples} & $[5, 50]$ \\
+  & \texttt{reg\_alpha}          & $[10^{-3}, 10]$ \\
+  & \texttt{reg\_lambda}         & $[10^{-3}, 10]$ \\
+\hline
+\multirow{6}{*}{XGBoost}
+  & \texttt{max\_depth}          & $[3, 10]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{subsample}           & $[0.6, 1.0]$ \\
+  & \texttt{colsample\_bytree}   & $[0.6, 1.0]$ \\
+  & \texttt{reg\_alpha}          & $[10^{-3}, 10]$ \\
+  & \texttt{reg\_lambda}         & $[10^{-3}, 10]$ \\
+\hline
+\multirow{4}{*}{CatBoost}
+  & \texttt{depth}               & $[4, 10]$ \\
+  & \texttt{learning\_rate}      & $[0.01, 0.1]$ \\
+  & \texttt{l2\_leaf\_reg}       & $[1, 10]$ \\
+  & \texttt{bagging\_temperature}& $[0.0, 1.0]$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Ensemble Weights}
+\label{app:ensemble}
 The final weighted ensemble used the following optimized weights:
 \begin{itemize}
     \item CatBoost: 61.98\%

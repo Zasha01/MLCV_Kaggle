@@ -1,108 +1,63 @@
 \section{Technical Background}
 
-\subsection{Supervised Regression}
-Supervised regression aims to learn a mapping from input features to a continuous target variable using labeled data. Given a dataset
-$\{(x_i, y_i)\}_{i=1}^N$, where $x_i \in \mathbb{R}^d$ and $y_i \in \mathbb{R}$,
-the objective is to learn a function $f : \mathbb{R}^d \rightarrow \mathbb{R}$
-that generalizes well to unseen samples. Regression is well suited for predicting
-exam scores, where both the magnitude and direction of prediction errors are
-meaningful \cite{hastie2009elements}.
+\subsection{Problem Setting and Evaluation}
+We study a supervised regression problem in which a model learns a mapping from
+tabular input features to a continuous target variable, namely student exam
+scores. Given labeled samples $\{(x_i, y_i)\}_{i=1}^N$, the goal is to learn a
+function that generalizes well to unseen data \cite{hastie2009elements}.
 
-\subsection{Evaluation Metric}
 Model performance is evaluated using \emph{Root Mean Squared Error (RMSE)}:
 \begin{equation}
 \mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2}.
 \end{equation}
-RMSE penalizes larger errors more strongly than absolute-error metrics, making it
-sensitive to poor predictions on extreme values. It is a standard metric for
-regression benchmarks and the official evaluation criterion of the Kaggle
-competition considered in this work \cite{kagglemetrics}.
+RMSE is the official evaluation metric of the Kaggle competition considered in
+this work and penalizes large prediction errors more strongly than absolute-error
+metrics \cite{kagglemetrics}.
 
-\subsection{Tree-Based and Gradient Boosted Models}
-Tree-based models partition the feature space using decision rules, allowing them
-to capture nonlinear relationships and feature interactions. While individual
-decision trees are flexible and interpretable, they are prone to high variance
-and limited generalization ability \cite{hastie2009elements}.
+\subsection{Tree-Based Models and Gradient Boosting}
+Tree-based models capture nonlinear relationships and feature interactions by
+partitioning the feature space with decision rules. While individual decision
+trees are flexible, they often suffer from high variance \cite{hastie2009elements}.
+Gradient Boosted Decision Trees (GBDTs) address this limitation by constructing
+trees sequentially, where each new tree corrects the residual errors of the
+current ensemble \cite{friedman2001gbm}.
 
-Gradient Boosted Decision Trees (GBDTs) mitigate this limitation by constructing
-trees sequentially, where each new tree is trained to correct the residual errors
-of the current ensemble. This process can be interpreted as gradient descent in
-function space with respect to a specified loss function \cite{friedman2001gbm}.
-GBDTs are particularly effective for tabular data and form the basis of several
-widely used implementations.
-
-Among these, XGBoost, LightGBM, and CatBoost follow the same boosting principle but
-differ in practical design choices. XGBoost uses level-wise tree growth with strong
-regularization, providing robust performance across a wide range of datasets
-\cite{xgboost}. LightGBM adopts a leaf-wise growth strategy with depth
-constraints, enabling faster training and improved accuracy on large datasets,
-though with increased overfitting risk \cite{lightgbm}. CatBoost is
-specifically designed for datasets with categorical features, employing ordered
-boosting and native categorical encoding to reduce target leakage and improve
-generalization \cite{catboost}.
+We evaluate three widely used GBDT implementations. XGBoost employs level-wise
+tree growth with strong regularization \cite{xgboost}. LightGBM adopts a
+leaf-wise growth strategy for improved efficiency and accuracy on large datasets,
+at the cost of increased overfitting risk \cite{lightgbm}. CatBoost is designed
+for datasets with categorical features, using ordered boosting and native
+categorical encoding to reduce target leakage \cite{catboost}.
 
 \subsection{Ensemble Learning and Cross-Validation}
 Ensemble learning combines predictions from multiple models to improve robustness
-and predictive performance by reducing variance and exploiting complementary model
-strengths \cite{zhou2012ensemble}. To reliably estimate generalization performance
-and guide model selection, cross-validation is commonly employed. By repeatedly
-training and evaluating models on different data splits, cross-validation provides
-a robust estimate of out-of-sample error and reduces sensitivity to a single train--
-test split \cite{kohavi1995cv}.
+and predictive performance by exploiting complementary model strengths
+\cite{zhou2012ensemble}. To obtain reliable estimates of generalization
+performance and enable fair model comparison, we use $k$-fold cross-validation,
+which reduces sensitivity to a single train--test split \cite{kohavi1995cv}.
 
+\subsection{Neural Networks for Tabular Data}
+Recent neural architectures have shown competitive performance on tabular data,
+challenging the dominance of gradient boosting methods. A key component enabling
+this is the use of \emph{entity embeddings}, which map categorical features to
+dense vector representations and allow the model to learn semantic relationships
+between categories.
 
-\subsection{Deep Learning for Tabular Data}
-While gradient boosting methods have traditionally dominated tabular data competitions, recent
-advances in neural network architectures have shown competitive or superior performance.
-Key innovations enabling this include:
+To model complex nonlinear interactions, deep networks often employ residual
+connections, which stabilize training of deeper architectures, and
+Squeeze-and-Excitation (SE) blocks, which adaptively reweight feature channels to
+emphasize informative inputs. These mechanisms allow neural models to learn
+instance-specific feature importance rather than relying on static splits.
 
-\textbf{Entity Embeddings:} Categorical features are mapped to dense vector representations
-through learnable embedding layers, allowing the network to discover semantic relationships
-between categories. For a categorical feature with $K$ unique values, an embedding layer
-learns a matrix $\mathbf{E} \in \mathbb{R}^{K \times d}$ where $d$ is the embedding dimension.
+\subsection{Model Interpretability}
+To interpret model predictions, we use SHAP (SHapley Additive exPlanations), a
+game-theoretic framework that attributes a model’s output to individual input
+features \cite{lundbergUnifiedApproachInterpreting2017}. SHAP values decompose a
+prediction into additive feature contributions relative to an expected baseline,
+enabling both local and global explanations.
 
-\textbf{Residual Connections:} Deep networks benefit from skip connections that allow gradients
-to flow directly through the network, enabling training of deeper architectures without
-degradation. A residual block computes:
-\begin{equation}
-\mathbf{h}_{l+1} = \mathbf{h}_l + \mathcal{F}(\mathbf{h}_l; \theta_l),
-\end{equation}
-where $\mathcal{F}$ represents learnable transformations.
-
-\textbf{Squeeze-and-Excitation (SE) Blocks:} Originally proposed for image classification,
-SE blocks adaptively recalibrate feature responses by modeling channel interdependencies.
-Given a feature vector $\mathbf{x} \in \mathbb{R}^C$, the SE mechanism computes attention
-weights via a bottleneck:
-\begin{equation}
-\mathbf{s} = \sigma(\mathbf{W}_2 \cdot \text{ReLU}(\mathbf{W}_1 \cdot \mathbf{x})),
-\end{equation}
-where $\mathbf{W}_1 \in \mathbb{R}^{C/r \times C}$ and $\mathbf{W}_2 \in \mathbb{R}^{C \times C/r}$
-with reduction ratio $r$. The output is $\mathbf{x} \odot \mathbf{s}$, allowing the network to
-emphasize informative features and suppress less useful ones.
-
-\subsection{Model Interpretability with SHAP}
-While gradient boosting models achieve strong predictive performance on tabular data, their
-decision-making process is often opaque. To address this, we employ SHAP (SHapley Additive
-exPlanations)~\cite{lundbergUnifiedApproachInterpreting2017}, a unified framework for interpreting
-model predictions based on game-theoretic Shapley values~\cite{shapleyValueNPersonGames1953}.
-
-SHAP values quantify the contribution of each feature to an individual prediction. For a prediction
-$\hat{y}$, the SHAP value $\phi_j$ for feature $j$ satisfies the efficiency property:
-\begin{equation}
-\hat{y} = \phi_0 + \sum_{j=1}^{d} \phi_j,
-\end{equation}
-where $\phi_0$ is the expected prediction across the training data. This decomposition ensures that
-feature contributions sum exactly to the model output, providing faithful explanations.
-
-Tree-based models enable efficient SHAP computation via TreeExplainer~\cite{lundbergLocalExplanationsGlobal2020},
-which exploits the tree structure to calculate exact Shapley values in polynomial time. This allows
-us to generate both local explanations (why did the model predict this score for a specific student?)
-and global insights (which features matter most across all predictions?).
-
-Global feature importance is derived by aggregating local SHAP values:
-\begin{equation}
-I_j = \frac{1}{N} \sum_{i=1}^{N} |\phi_j^{(i)}|,
-\end{equation}
-where $\phi_j^{(i)}$ is the SHAP value of feature $j$ for sample $i$. Unlike permutation importance,
-SHAP-based importance accounts for feature interactions and provides directional information about
-how features influence predictions~\cite{lundbergExplainableMachinelearningPredictions2018}.
+For tree-based models, SHAP values can be computed efficiently using
+TreeExplainer \cite{lundbergLocalExplanationsGlobal2020}. Global feature importance
+is obtained by aggregating absolute SHAP values across samples, providing insight
+into which features most strongly influence predictions while accounting for
+feature interactions \cite{lundbergExplainableMachinelearningPredictions2018}.
