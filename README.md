@@ -1,190 +1,187 @@
-# Student Test Score Prediction - Kaggle Competition
+# Student Test Score Prediction - Kaggle Playground Series S6E1
 
-This repository contains a comprehensive solution for the Kaggle Playground Series S6E1 competition to predict student test scores.
+Modular machine learning codebase for the Kaggle Playground Series S6E1 competition. Includes traditional models, gradient boosting, custom SE-ResNet architecture, and an IEEE conference paper.
 
 ## 📁 Project Structure
 
 ```
 MLCV_Kaggle/
-├── data/
-│   ├── train.csv              # Training data (630,000 samples)
-│   ├── test.csv               # Test data (270,000 samples)
-│   └── sample_submission.csv  # Sample submission format
+├── data/                      # Dataset files
+│   ├── train.csv             # Training data
+│   ├── test.csv              # Test data
+│   └── sample_submission.csv # Submission format
+│
+├── src/                       # Modular source code
+│   ├── config.py             # Global configuration and hyperparameters
+│   ├── data/
+│   │   ├── loader.py         # Data loading utilities
+│   │   └── features.py       # Feature engineering functions
+│   ├── models/
+│   │   ├── base.py           # Base model class
+│   │   ├── ridge.py          # Ridge regression
+│   │   ├── random_forest.py  # Random Forest
+│   │   ├── lightgbm_model.py # LightGBM implementation
+│   │   ├── xgboost_model.py  # XGBoost implementation
+│   │   ├── catboost_model.py # CatBoost implementation
+│   │   ├── senet.py          # SE-ResNet neural network
+│   │   └── ensemble.py       # Ensemble methods
+│   ├── training/
+│   │   ├── cross_validation.py # CV framework
+│   │   └── tuning.py         # Hyperparameter optimization
+│   ├── evaluation/
+│   │   └── metrics.py        # Evaluation metrics
+│   └── visualization/
+│       └── plots.py          # Plotting utilities
+│
+├── scripts/                   # Executable scripts
+│   ├── run_eda.py            # Exploratory data analysis
+│   ├── run_training.py       # Train models with CV
+│   ├── run_tuning.py         # Bayesian hyperparameter tuning
+│   ├── run_stacking.py       # Stacking ensemble
+│   ├── run_senet.py          # SE-ResNet training
+│   ├── run_shap_analysis.py  # SHAP interpretability
+│   ├── run_submission.py     # Generate submission file
+│
+├── outputs/                   # Generated outputs
+│   ├── figures/              # Visualizations
+│   ├── models/               # Saved model files
+│   └── results/              # JSON results and metrics
+│
+├── latex/                     # IEEE Conference Paper
+│   ├── main.tex              # Main LaTeX document
+│   ├── sections/             # Paper sections
+│   ├── references.bib        # Bibliography
+│   └── figures/              # Paper figures
+│
 ├── kaggle_notebooks/          # Reference notebooks from Kaggle
-├── student_score_prediction.ipynb  # Main solution notebook
-├── context.md                 # Competition strategy and plan
-└── README.md                  # This file
+├── student_score_prediction.ipynb  # Exploration notebook
+├── requirements.txt           # Python dependencies
+└── README.md                 # This file
 ```
 
-## 🎯 Competition Overview
-
-- **Goal**: Predict student exam scores from demographic and behavioral features
-- **Metric**: RMSE (Root Mean Squared Error) - lower is better
-- **Dataset**: Synthetically generated from deep learning model
-- **Features**: 12 features (4 numerical, 7 categorical)
-
-### Features
-
-**Numerical:**
-- `age`: Student age (17-24)
-- `study_hours`: Weekly study hours
-- `class_attendance`: Attendance percentage
-- `sleep_hours`: Daily sleep hours
-
-**Categorical:**
-- `gender`: Student gender
-- `course`: Course enrolled (B.Sc, B.Tech, BCA, etc.)
-- `internet_access`: Yes/No
-- `sleep_quality`: Good/Average/Poor
-- `study_method`: Coaching/Self-study/Mixed/Group study/Online videos
-- `facility_rating`: High/Medium/Low
-- `exam_difficulty`: Easy/Moderate/Hard
-
-## 📊 Main Notebook Contents
-
-The `student_score_prediction.ipynb` notebook includes:
-
-### 1. Setup and Data Loading
-- Import necessary libraries
-- Load train/test datasets
-- Basic data inspection
-
-### 2. Exploratory Data Analysis (EDA)
-- Target distribution analysis
-- Feature correlations
-- Scatter plots for numerical features
-- Box plots for categorical features
-- Comprehensive visualizations
-
-### 3. Feature Engineering
-- **Interaction features**: `study_hours * class_attendance`, etc.
-- **Ratio features**: `attendance_per_hour`, `sleep_per_study`
-- **Polynomial features**: Squared and cubed terms
-- **Binary flags**: `is_low_sleep`, `is_high_attendance`
-- **Domain formula**: From Kaggle discussion insights
-- **Target encoding**: CV-safe implementation
-- **Frequency encoding**: Category frequency features
-
-### 4. Model Development
-
-#### Baseline Models
-- Ridge Regression (with standardization)
-- Random Forest Regressor
-
-#### Advanced Models (Gradient Boosting)
-- **LightGBM**: Primary model with feature importance
-- **XGBoost**: Alternative boosting model
-- **CatBoost**: Native categorical handling
-
-All models use 5-fold cross-validation for robust evaluation.
-
-### 5. Ensemble Methods
-- **Simple Average**: Equal weights for top 3 models
-- **Weighted Ensemble**: Optimized weights using scipy
-
-### 6. Results Summary
-- Comparison table of all models
-- Visualization of model performance
-- Residual analysis
-- Feature importance plots
-
-### 7. Final Submission
-- Best model selection
-- Prediction clipping
-- CSV submission file generation
-
-## 🚀 Getting Started
-
-### Prerequisites
+## 🚀 Installation
 
 ```bash
-pip install pandas numpy matplotlib seaborn scikit-learn lightgbm xgboost catboost scipy
+# Clone repository
+git clone <repository-url>
+cd MLCV_Kaggle
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### Running the Notebook
+## 🔧 Usage
 
-1. **Ensure data files are in the `data/` directory:**
-   - `train.csv`
-   - `test.csv`
-   - `sample_submission.csv`
+### Running Analysis and Training
 
-2. **Open the notebook:**
-   ```bash
-   jupyter notebook student_score_prediction.ipynb
-   ```
+```bash
+# 1. Exploratory Data Analysis
+python scripts/run_eda.py
+# Generates visualizations in outputs/figures/
 
-3. **Run all cells sequentially** (or use "Run All")
+# 2. Train all models with cross-validation
+python scripts/run_training.py
+# Trains Ridge, Random Forest, LightGBM, XGBoost, CatBoost
 
-4. **Output:**
-   - `submission.csv`: Final predictions for Kaggle submission
-   - Multiple visualizations and analysis throughout
+# 3. Hyperparameter tuning (optional)
+python scripts/run_tuning.py
+# Bayesian optimization for gradient boosting models
 
-## 📈 Expected Results
+# 4. Train SE-ResNet neural network
+python scripts/run_senet.py
+# Custom deep learning model with entity embeddings
 
-Based on cross-validation, expected RMSE scores:
+# 5. Run SHAP analysis
+python scripts/run_shap_analysis.py
+# Generate feature importance visualizations
 
-| Model | Expected CV RMSE |
-|-------|------------------|
-| Ridge Regression | ~10-11 |
-| Random Forest | ~9.5-10 |
-| LightGBM | ~8.75-8.80 |
-| XGBoost | ~8.75-8.85 |
-| CatBoost | ~8.70-8.80 |
-| **Ensemble** | **~8.65-8.70** |
+# 6. Generate Kaggle submission
+python scripts/run_submission.py
+# Creates submission.csv with predictions
+```
 
-## 🔑 Key Findings
+## 📝 Building the Paper
 
-### Most Important Features
-1. `study_hours` (highest correlation: 0.76)
-2. `study_hours * class_attendance` (interaction)
-3. `class_attendance`
-4. Target-encoded categorical features
-5. Formula-based composite feature
+The `latex/` directory contains the IEEE conference paper source:
 
-### Model Insights
-- Gradient boosting models significantly outperform baseline approaches
-- Feature engineering provides substantial performance gains
-- Ensemble methods offer marginal but consistent improvements
-- Target encoding is highly effective for categorical features
+```bash
+cd latex/
+pdflatex main.tex
+bibtex main
+pdflatex main.tex
+pdflatex main.tex
+```
 
-## 📝 For University Report
+Output: `main.pdf`
 
-The notebook is structured to support a comprehensive report:
+## ⚙️ Configuration
 
-1. **Introduction**: Problem statement and dataset overview
-2. **EDA**: Comprehensive analysis with visualizations
-3. **Methodology**: Feature engineering and model selection
-4. **Results**: Cross-validation scores and comparisons
-5. **Analysis**: Feature importance and residual analysis
-6. **Conclusion**: Key findings and recommendations
+All settings are centralized in `src/config.py`:
 
-## 🤝 Team Collaboration
+- **Paths**: Data directories, output locations
+- **Hyperparameters**: Model-specific parameters for all algorithms
+- **Seeds**: Random seed for reproducibility (default: 42)
+- **Cross-validation**: Number of folds (default: 5)
+- **Features**: Column definitions (numerical/categorical)
+- **Plotting**: DPI, style, colors
 
-The project can be divided into 3 parts:
+## 📦 Code Organization
 
-- **Person 1**: EDA, visualizations, and interpretation
-- **Person 2**: Feature engineering and baseline models
-- **Person 3**: Gradient boosting, tuning, and ensembling
+### Design Principles
+- **Modular**: Separated concerns (data, models, training, evaluation)
+- **Reusable**: Base classes with consistent interfaces
+- **Configurable**: Centralized configuration management
+- **Reproducible**: Fixed random seeds, version-controlled
+- **Maintainable**: Clean structure with docstrings
 
-## 📚 References
+### Key Modules
 
-- Kaggle Competition: [Playground Series S6E1](https://www.kaggle.com/competitions/playground-series-s6e1)
-- Reference notebooks in `kaggle_notebooks/` directory
-- Competition discussions for domain insights
+**`src/data/`** - Data handling
+- Data loading and preprocessing
+- Feature engineering (interactions, polynomials, target encoding)
+- CV-safe transformations
 
-## 🎓 Next Steps
+**`src/models/`** - Model implementations
+- Base class for unified interface
+- Sklearn/LightGBM/XGBoost/CatBoost wrappers
+- Custom SE-ResNet implementation (PyTorch)
 
-1. **Hyperparameter tuning**: Further optimize model parameters
-2. **Advanced ensembling**: Implement stacking with meta-learners
-3. **Neural networks**: Experiment with TabNet or deep learning
-4. **Original dataset**: Incorporate original data for training
-5. **Feature selection**: Identify and remove redundant features
+**`src/training/`** - Training utilities
+- Cross-validation framework
+- Hyperparameter optimization (Bayesian)
+- Model checkpointing
+
+**`src/evaluation/`** - Evaluation tools
+- RMSE and other metrics
+- Residual analysis
+- Model comparison
+
+**`src/visualization/`** - Plotting
+- EDA visualizations
+- Feature importance plots
+- SHAP visualizations
+
+## 🎯 Workflow
+
+Standard workflow for reproducing results:
+
+1. Place data files in `data/` directory
+2. Run `python scripts/run_eda.py` to understand the data
+3. Run `python scripts/run_training.py` to train baseline and boosting models
+4. Run `python scripts/run_senet.py` to train deep learning model
+5. Run `python scripts/run_submission.py` to generate predictions
+6. (Optional) Run `python scripts/run_shap_analysis.py` for interpretability
+
+All outputs (figures, models, results) saved in `outputs/`.
+
+## 👥 Team
+
+University of Porto (FEUP) - Machine Learning Course
+- Lars Moen Storvik (up202508437@up.pt)
+- Tina Kovačević (up202501724@up.pt)
+- Zakariea Sharfeddine (up202501730@up.pt)
 
 ## 📄 License
 
-This is a university project for educational purposes.
-
----
-
-**Good luck with your competition and presentation! 🎉**
+Educational project for University of Porto.
 
