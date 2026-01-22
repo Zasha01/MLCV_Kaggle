@@ -47,14 +47,6 @@ MLCV_Kaggle/
 │   ├── models/               # Saved model files
 │   └── results/              # JSON results and metrics
 │
-├── latex/                     # IEEE Conference Paper
-│   ├── main.tex              # Main LaTeX document
-│   ├── sections/             # Paper sections
-│   ├── references.bib        # Bibliography
-│   └── figures/              # Paper figures
-│
-├── kaggle_notebooks/          # Reference notebooks from Kaggle
-├── student_score_prediction.ipynb  # Exploration notebook
 ├── requirements.txt           # Python dependencies
 └── README.md                 # This file
 ```
