@@ -29,17 +29,19 @@ XGBoost & 8.8220 & $\pm$0.1928 \\
 \end{tabular}
 \end{table}
 
+Table~\ref{tab:results} shows that SE-ResNet achieves the lowest cross-validated error (RMSE 8.6047), outperforming all tree-based gradient boosting approaches by approximately 0.15 RMSE.
 
-\noindent Key observations:
-\begin{itemize}
-    \item \textbf{SE-ResNet achieves the best performance} (8.6047), outperforming all gradient boosting methods by $\sim$0.15 RMSE.
-    \item Among tree-based models, CatBoost achieved the best single-model performance (8.7618).
-    \item Gradient boosting ensembles provide only marginal improvements over single GBM models.
-    \item The neural network's advantage comes from learned feature interactions and data augmentation.
-\end{itemize}
+Among the individual gradient-boosted decision tree models, CatBoost yields the best single-model performance (RMSE 8.7618), closely followed by LightGBM.
+
+Ensembling provides only marginal gains over the strongest single GBDT models, suggesting diminishing returns from combining similar learners in this setting.
+
+Overall, the results indicate that the neural architecture benefits from its ability to learn nonlinear feature interactions and from the applied data augmentation strategy.
+
+%% \noindent Key observations: \begin{itemize} \item \textbf{SE-ResNet achieves the best performance} (8.6047), outperforming all gradient boosting methods by $\sim$0.15 RMSE. \item Among tree-based models, CatBoost achieved the best single-model performance (8.7618). \item Gradient boosting ensembles provide only marginal improvements over single GBM models. \item The neural network's advantage comes from learned feature interactions and data augmentation. \end{itemize}
 
 \subsection{Hyperparameter Tuning Results}
-Bayesian optimization with Optuna (50 trials per model) yielded significant improvements, particularly for XGBoost. Table~\ref{tab:tuning_improvement} compares default vs.\ tuned performance.
+
+Bayesian optimization with Optuna (50 trials per model) improved performance across the gradient boosting models, with the largest gain observed for XGBoost.
 
 \begin{table}[H]
 \centering
@@ -55,21 +57,22 @@ CatBoost & 8.7808 & 8.7618 & 0.0190 (0.22\%) \\
 \bottomrule
 \end{tabular}
 \end{table}
+As shown in Table~\ref{tab:tuning_improvement}, \textbf{XGBoost} benefited most from tuning, reducing RMSE by 0.1051 (1.18\%).
+The optimized configuration (Table~\ref{tab:tuned_params}) favors deeper trees (\texttt{max\_depth}=9) combined with a lower learning rate (0.0189) and strong regularization (\texttt{reg\_lambda}=9.979), suggesting that additional model capacity requires careful shrinkage and penalty terms to generalize well.
 
-\noindent Key findings from hyperparameter tuning:
-\begin{itemize}
-    \item \textbf{XGBoost} benefited most from tuning, with RMSE improving by 0.105 (1.18\%). The optimal configuration used deeper trees (\texttt{max\_depth}=9) with lower learning rate (0.019) and strong regularization (\texttt{reg\_lambda}=9.98).
-    \item \textbf{LightGBM} showed modest improvement. Tuning favored more leaves (\texttt{num\_leaves}=84) with moderate learning rate (0.033) and higher regularization.
-    \item \textbf{CatBoost} performed slightly worse after tuning, suggesting the default parameters were already near-optimal for this dataset. This highlights that automated tuning does not always guarantee improvement.
-\end{itemize}
+\textbf{LightGBM} exhibits only a modest improvement of 0.0066 (0.08\%), with the selected configuration increasing model expressiveness via a larger number of leaves (\texttt{num\_leaves}=84) while maintaining moderate learning rate (0.0334) and regularization.
 
-Table~\ref{tab:tuned_params} shows the optimal hyperparameters discovered.
+\textbf{CatBoost} improves slightly by 0.0190 (0.22\%), indicating that its default settings are already competitive for this dataset, and that automated tuning yields diminishing returns for models that are near a strong default operating point.
+
+The optimal hyperparameter values found by Optuna are reported in Table~\ref{tab:tuned_params}.
+
+%% \noindent Key findings from hyperparameter tuning: \begin{itemize} \item \textbf{XGBoost} benefited most from tuning, with RMSE improving by 0.105 (1.18\%). The optimal configuration used deeper trees (\texttt{max\_depth}=9) with lower learning rate (0.019) and strong regularization (\texttt{reg\_lambda}=9.98). \item \textbf{LightGBM} showed modest improvement. Tuning favored more leaves (\texttt{num\_leaves}=84) with moderate learning rate (0.033) and higher regularization. \item \textbf{CatBoost} performed slightly worse after tuning, suggesting the default parameters were already near-optimal for this dataset. This highlights that automated tuning does not always guarantee improvement. \end{itemize} Table~\ref{tab:tuned_params} shows the optimal hyperparameters discovered.
 
 \begin{table}[H]
 \centering
 \caption{Optimal Hyperparameters from Bayesian Optimization (50 trials)}
 \label{tab:tuned_params}
-\begin{tabular}{l l r}
+\begin{tabular}{l l l}
 \toprule
 \textbf{Model} & \textbf{Parameter} & \textbf{Value} \\
 \midrule
@@ -186,7 +189,7 @@ study\_method\_freq & 1.75 \\
 \end{tabular}
 \end{table}
 
-\noindent The engineered \texttt{formula\_score} feature dominates, followed by encodings of \texttt{sleep\_quality} and \texttt{study\_method}, confirming that feature engineering significantly improved predictive power.
+\noindent The engineered \texttt{formula\_score}  feature (Eq.~\eqref{eq:domain_score}) dominates, followed by encodings of \texttt{sleep\_quality} and \texttt{study\_method}, confirming that feature engineering significantly improved predictive power.
 
 \subsection{SHAP Analysis}
 To provide deeper insights into model behavior, we computed SHAP values~\cite{lundbergUnifiedApproachInterpreting2017} using TreeExplainer~\cite{lundbergLocalExplanationsGlobal2020} on a representative sample of 30,000 training instances.
