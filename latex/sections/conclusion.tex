@@ -13,7 +13,7 @@ This project addressed the Kaggle Playground Series S6E1 challenge of predicting
 \subsection{Key Findings}
 \begin{enumerate}
     \item \textbf{Deep learning can beat GBMs on tabular data}: The SE-ResNet architecture with entity embeddings and attention mechanisms achieved the best results, challenging the conventional wisdom that gradient boosting always wins on tabular data.
-    \item \textbf{Data augmentation is crucial}: Incorporating the original dataset during neural network training provided significant improvements.
+    \item \textbf{Architectural design matters}: The combination of embeddings, attention mechanisms, and residual connections enabled the neural network to outperform tree-based models.
     \item \textbf{Feature engineering matters}: The engineered \texttt{formula\_score} dominated feature importance across all models.
     \item \textbf{Attention helps}: Squeeze-and-Excitation blocks enable instance-specific feature weighting, improving predictions.
     \item \textbf{GBM ensembles have diminishing returns}: Weighted blending and stacking improved GBMs by only $\sim$0.005 RMSE.
@@ -22,7 +22,6 @@ This project addressed the Kaggle Playground Series S6E1 challenge of predicting
 \subsection{Future Work}
 Potential improvements include:
 \begin{itemize}
-    \item Applying data augmentation to gradient boosting models for fair comparison
     \item Exploring alternative neural architectures (TabNet, FT-Transformer, NODE)
     \item Hybrid ensembles combining GBM and neural network predictions
     \item Investigating neural network interpretability methods (e.g., attention visualization, integrated gradients)

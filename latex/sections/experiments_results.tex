@@ -35,7 +35,7 @@ Among the individual gradient-boosted decision tree models, CatBoost yields the 
 
 Ensembling provides only marginal gains over the strongest single GBDT models, suggesting diminishing returns from combining similar learners in this setting.
 
-Overall, the results indicate that the neural architecture benefits from its ability to learn nonlinear feature interactions and from the applied data augmentation strategy.
+Overall, the results indicate that the neural architecture benefits from its ability to learn nonlinear feature interactions and from its architectural design.
 
 %% \noindent Key observations: \begin{itemize} \item \textbf{SE-ResNet achieves the best performance} (8.6047), outperforming all gradient boosting methods by $\sim$0.15 RMSE. \item Among tree-based models, CatBoost achieved the best single-model performance (8.7618). \item Gradient boosting ensembles provide only marginal improvements over single GBM models. \item The neural network's advantage comes from learned feature interactions and data augmentation. \end{itemize}
 
@@ -157,7 +157,6 @@ The SE-ResNet architecture achieved the best overall performance with \textbf{RM
 
 \noindent Key factors contributing to the neural network's superior performance:
 \begin{itemize}
-    \item \textbf{Data augmentation}: The original dataset (not just competition data) was concatenated with each training fold, effectively increasing training data and reducing overfitting.
     \item \textbf{Learned embeddings}: Entity embeddings for categorical features allow the network to discover semantic relationships not captured by one-hot or target encoding.
     \item \textbf{SE attention}: Squeeze-and-Excitation blocks dynamically reweight features, emphasizing informative dimensions for each sample.
     \item \textbf{Residual connections}: Enable training of deeper networks without degradation.

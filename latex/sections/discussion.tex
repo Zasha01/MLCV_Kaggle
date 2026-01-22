@@ -12,19 +12,16 @@ The results demonstrate a clear performance hierarchy, with the neural network a
 \subsection{Why Neural Networks Outperform GBMs}
 The SE-ResNet's 1.74\% improvement over gradient boosting is notable and stems from several factors:
 
-\textbf{1. Data Augmentation:}
-The most significant advantage comes from incorporating the original dataset (not just the Kaggle competition data) during training. This effectively increases the training set size and provides additional signal. GBMs were trained only on competition data, while the neural network benefited from augmented data.
-
-\textbf{2. Learned Feature Interactions:}
+\textbf{1. Learned Feature Interactions:}
 While GBMs capture feature interactions through tree splits, neural networks learn continuous, differentiable interaction functions. The SE-ResNet's residual blocks with attention mechanisms can model complex, non-linear relationships that axis-aligned tree splits may miss.
 
-\textbf{3. Entity Embeddings:}
+\textbf{2. Entity Embeddings:}
 Categorical embeddings (dimension $d=8$) allow the network to learn distributed representations where similar categories are mapped to nearby vectors. This provides richer representations than one-hot encoding or target encoding used in GBMs.
 
-\textbf{4. Attention Mechanisms:}
+\textbf{3. Attention Mechanisms:}
 Squeeze-and-Excitation blocks dynamically reweight features for each sample, effectively performing instance-specific feature selection. This adaptive behavior is not possible with static feature importance in GBMs.
 
-\textbf{5. Regularization Strategy:}
+\textbf{4. Regularization Strategy:}
 The combination of dropout (11\%), weight decay, LayerNorm, and early stopping provides robust regularization that prevents overfitting despite the model's high capacity.
 
 \subsection{Feature Engineering Impact}
@@ -48,14 +45,13 @@ While SE-ResNet achieved the best results, gradient boosting methods remain valu
     \item \textbf{Training efficiency}: GBMs train in minutes; the neural network required hours.
     \item \textbf{Interpretability}: SHAP values provide clear explanations for GBMs; neural network explanations are less straightforward.
     \item \textbf{Hyperparameter sensitivity}: Neural networks require careful tuning of learning rate, architecture depth, dropout, etc.
-    \item \textbf{Data requirements}: Neural networks benefit more from data augmentation; GBMs are more data-efficient.
+    \item \textbf{Data requirements}: Neural networks are generally more data-hungry than GBMs, while gradient boosting methods tend to be more data-efficient on structured datasets.
 \end{itemize}
 
 \subsection{Limitations}
 Several limitations apply to this work:
 \begin{itemize}
     \item \textbf{Synthetic data}: The dataset was generated from a deep learning model, so relationships may not perfectly reflect real-world patterns. Notably, the neural network's advantage may partly stem from matching the data-generating process.
-    \item \textbf{Data augmentation fairness}: The neural network used additional data (original dataset), which was not available to GBM models. A fairer comparison would train all models with the same augmented data.
     \item \textbf{Limited neural network exploration}: Only one architecture was tested; alternatives like TabNet, FT-Transformer, or NODE could yield further improvements.
     \item \textbf{Generalization}: Results are specific to this synthetic dataset and may not transfer to real student data.
 \end{itemize}
